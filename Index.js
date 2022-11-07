@@ -139,6 +139,52 @@ const adminTokenLoginCheck = async (req, res, next) => {
     }
   }
 };
+
+
+
+
+//===============================================分隔線================================================
+
+
+
+//購物流程
+
+//會員
+//會員紅利點數(資料)
+app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
+
+
+//店家
+
+//外送員
+
+
+
+//管理者
+//優惠券管理(資料)
+app.use(
+  "/AdminCouponRenderApi",  
+  require("./Api/Admin/Coupon/Admin_CouponRenderApi")
+);
+//優惠券管理(動作)
+app.post(
+  "/AdminCouponEditApi",adminTokenLoginCheck,  
+  require("./Api/Admin/Coupon/Admin_CouponEditApi")
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //===============================================分隔線================================================
 //Token登入
 app.use("/Login", require("./Modules/TokonLoginApi"));
