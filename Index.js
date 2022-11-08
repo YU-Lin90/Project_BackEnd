@@ -196,6 +196,8 @@ app.use("/LoginCheck", require("./Modules/TokonLoginCheckApi"));
 //設定根目錄資料夾 通常放在404前面
 app.use(express.static("Public"));
 
+app.use('/images',express.static("Images"));
+
 //設定PORT
 const port = process.env.SERVER_PORT || 3001;
 //設定監聽port

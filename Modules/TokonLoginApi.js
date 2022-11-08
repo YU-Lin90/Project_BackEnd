@@ -26,7 +26,7 @@ router.use("/Member", async (req, res) => {
   let [[result]] = await DB.query(loginSql, [email]);
   let passStat = false;
   result.password === password ? (passStat = true) : null;
-  console.log(result);
+  console.log('會員登入'+result);
   if (!result) {
     output.errorType = "帳號或密碼錯誤";
     return res.json(output);
