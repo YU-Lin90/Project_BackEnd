@@ -171,7 +171,7 @@ app.post(
   "/AdminCouponEditApi",adminTokenLoginCheck,  
   require("./Api/Admin/Coupon/Admin_CouponEditApi")
 );
-
+app.use('/AdminService',adminTokenLoginCheck,require("./Api/Admin/Service/Admin_ServiceRenderApi"));
 
 
 
@@ -209,7 +209,7 @@ const server = app.listen(port, () => {
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 //WebSocket
 //先不開 之後設定好再開
-// require(__dirname + "/routes/WebSocket")(server);
+require(__dirname + "/Modules/WebSocket")(server);
 
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 //404頁面 放最後
