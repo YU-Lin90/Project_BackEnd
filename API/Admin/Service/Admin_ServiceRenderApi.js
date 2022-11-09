@@ -19,12 +19,13 @@ router.use("/Choosed", async (req, res) => {
     //     post_sid  post_side  receive_sid  receive_side
     let [getData] = await DB.query(sql, [sid, side,sid,side]);
     // console.log(getData);
-    // for (let element of getData) {
-    //   const postTime = moment(element.post_time)
-    //     .tz("Asia/Taipei")
-    //     .format("YYYY-MM-DD HH:mm:ss");
-    //   element.post_time = postTime;
-    // }
+    for (let element of getData) {
+      const postTime = moment(element.post_time)
+        .tz("Asia/Taipei")
+        .format("YYYY-MM-DD HH:mm:ss");
+      element.post_time = postTime;
+      element.post_content = element.post_content.slice(1,element.post_content.length - 1)
+    }
 
     return res.json(getData);
   }
@@ -37,8 +38,7 @@ router.use("/", async (req, res) => {
   if (!req.token) {
     return res.json(0);
   }
-  //TODO: 要分三邊叫資料.. LEFT JOIN 不同
-  //這段已經分開
+  //TODO:  時間要再調整
 
   //有登入才叫資料
   else if (req.token.sid === 101) {

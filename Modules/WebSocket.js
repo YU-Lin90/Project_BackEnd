@@ -70,9 +70,10 @@ const createEchoServer = (server) => {
                 const receiveSide = MSG.receive_side;
                 //寫入資料庫
                 const sql = "INSERT INTO `messages`(`post_sid`, `post_side`, `receive_sid`, `receive_side`, `post_content`, `post_time`) VALUES (?,?,?,?,?,NOW())"
-                let [{ affectedRows }] = await DB.query(sql, [postSid, postSide, receiveSid, receiveSide, DB.escape(content)])
+                let [{ affectedRows,insertId }] = await DB.query(sql, [postSid, postSide, receiveSid, receiveSide, DB.escape(content)])
                 // console.log();
                 console.log('--------------------');
+                console.log(insertId);
                 console.log({ "WS發言，儲存的資料庫列數": affectedRows });
                 console.log("-|-|-WS發言者:" + postSid + "-|-|-side:" + postSide);
                 console.log("WS發言內容:" + content + "-|-|-WS發言對象:" + receiveSid + "-|-|-side:" + receiveSide);
@@ -82,7 +83,7 @@ const createEchoServer = (server) => {
                     .tz("Asia/Taipei")
                     .format("YYYY-MM-DD HH:mm:ss");
                 //設定要回傳的資料
-                let sendData = { "msg": content, "name": map.get(ws).name, "post_side": postSide, "post_sid": postSid, "receive_side": receiveSide, "receive_sid": receiveSid, "time": timeNow /*[,"read",true已讀]*/ };
+                let sendData = { "post_content": content, "name": map.get(ws).name, "post_side": postSide, "post_sid": postSid, "receive_side": receiveSide, "receive_sid": receiveSid,"sid":insertId, "post_time": timeNow /*[,"read",true已讀]*/ };
                 //從對照表找對方WS
                 const receiveWS = referenceList[receiveSide][receiveSid];
                 // console.log(receiveWS);
