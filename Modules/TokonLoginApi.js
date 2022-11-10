@@ -24,6 +24,10 @@ router.use("/Member", async (req, res) => {
     "SELECT `sid`, `name`, `email`, `password` FROM `member` WHERE `email` LIKE ? ";
 
   let [[result]] = await DB.query(loginSql, [email]);
+  if(!result){
+    output.errorType = "帳號或密碼錯誤";
+    return res.json(output);
+  }
   let passStat = false;
   result.password === password ? (passStat = true) : null;
   console.log('會員登入'+result);
