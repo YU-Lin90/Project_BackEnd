@@ -148,17 +148,19 @@ const adminTokenLoginCheck = async (req, res, next) => {
 
 
 //購物流程
-
+// 
 //會員
 //會員紅利點數(資料)
 app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
 
 
-//店家
+app.use("/Member/ChatServiceToAdmin", [memberTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
 
+//店家
+app.use("/Store/ChatServiceToAdmin",[storeTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
 //外送員
 
-
+app.use("/Deliver/ChatServiceToAdmin", [deliverTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
 
 //管理者
 //優惠券管理(資料)
