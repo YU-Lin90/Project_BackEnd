@@ -3,7 +3,7 @@ const DB = require('../Modules/ConnectDataBase');
 const moment = require("moment-timezone");
 const jwt = require('jsonwebtoken')
 const createEchoServer = (server) => {
-    //TODO:直接把TOKEN送到後端解析設定資訊?
+    //TODO:已讀未讀要做?
     const wsServer = new WebSocket.Server({ server });
     //===============================================分隔線================================================
     //使用方法: 前端在載入時傳入 socket.send(`{"post_side":1/2/3/4}`)
@@ -53,7 +53,9 @@ const createEchoServer = (server) => {
                 const getSid = tokens.sid;
                 const getName = tokens.name;
                 const side = tokens.side;
-                console.log('聊天室連線----名稱:'+getName +',side:'+side+',sid:'+getSid);
+                console.log('----聊天室連線----');
+                console.log('名稱:'+getName +',side:'+side+',sid:'+getSid);
+                console.log('------------------');
                 // console.log(referenceList[side][getSid]);
                 map.set(ws, { "sid": getSid, "name": getName, "side": side });
                 referenceList[side][getSid] = ws;
@@ -73,10 +75,11 @@ const createEchoServer = (server) => {
                 let [{ affectedRows,insertId }] = await DB.query(sql, [postSid, postSide, receiveSid, receiveSide, DB.escape(content)])
                 // console.log();
                 console.log('--------------------');
-                console.log(insertId);
-                console.log({ "WS發言，儲存的資料庫列數": affectedRows });
-                console.log("-|-|-WS發言者:" + postSid + "-|-|-side:" + postSide);
-                console.log("WS發言內容:" + content + "-|-|-WS發言對象:" + receiveSid + "-|-|-side:" + receiveSide);
+
+                console.log( "WS發言，儲存的資料庫列數:"+ affectedRows );
+                console.log('資料庫SID:'+insertId);
+                console.log("WS發言者:" + postSid + ",side:" + postSide);
+                console.log("WS發言內容:" + content + ",WS發言對象:" + receiveSid + ",side:" + receiveSide);
                 console.log('--------------------');
                 //回傳現在時間
                 const timeNow = moment(new Date())
@@ -104,7 +107,10 @@ const createEchoServer = (server) => {
             return;
         });
         ws.on('close',()=>{
-          console.log('close');
+          console.log('----聊天室離線----');
+          console.log('sid:'+map.get(ws).sid);
+          console.log('side:'+map.get(ws).side);
+          delete referenceList[map.get(ws).side][map.get(ws).sid];
         })
     });
 };

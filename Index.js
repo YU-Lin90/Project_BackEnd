@@ -204,7 +204,7 @@ app.use('/images',express.static("Images"));
 const port = process.env.SERVER_PORT || 3001;
 //設定監聽port
 const server = app.listen(port, () => {
-  console.log("伺服器啟動，埠號", port);
+  console.log("伺服器啟動，埠號:", port);
 });
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 
