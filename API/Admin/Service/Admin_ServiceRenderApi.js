@@ -38,7 +38,6 @@ router.use("/", async (req, res) => {
   if (!req.token) {
     return res.json(0);
   }
-  //TODO:  時間要再調整
 
   //有登入才叫資料
   else if (req.token.sid === 101) {
