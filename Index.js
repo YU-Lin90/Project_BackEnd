@@ -148,7 +148,11 @@ const adminTokenLoginCheck = async (req, res, next) => {
 
 
 //購物流程
-// 
+//LinePay
+app.use("/LinePay",require("./Modules/LinePay"));
+
+
+
 //會員
 //會員紅利點數(資料)
 app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));

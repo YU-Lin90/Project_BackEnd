@@ -1,7 +1,7 @@
-var express = require('express')
-var router = express.Router()
-
-// const { v4: uuidv4 } = require('uuid')
+const express = require('express')
+const router = express.Router()
+const DB = require('./ConnectDataBase')
+const moment = require("moment-timezone");
 const line_pay = require('line-pay')
 const cache = require('memory-cache')
 
@@ -10,8 +10,8 @@ const cache = require('memory-cache')
 const pay = new line_pay({
   // channelId: process.env.LINE_PAY_CHANNEL_ID,
   // channelSecret: process.env.LINE_PAY_CHANNEL_SECRET,
-  channelId: 'channelId',   //填入ID  不是登入帳號
-  channelSecret: 'channelSecret', //填入密碼
+  channelId: process.env.LINE_PAY_CHANNEL_ID,
+  channelSecret: process.env.LINE_PAY_CHANNEL_SECRET,
   // hostname: 'localhost',
   isSandbox: true,
 })
@@ -44,7 +44,7 @@ router.get('/reserve', (req, res) => {
     //     ],
     //   },
     // ],
-    confirmUrl: 'http://localhost:3000/pay-confirm',
+    confirmUrl: 'http://localhost:3000/PayConfirmed',
     // redirectUrls: {
     //   confirmUrl: 'http://localhost:3000/pay-confirm',
     //   cancelUrl: 'http://localhost:3000/pay-confirm',
@@ -60,7 +60,7 @@ router.get('/reserve', (req, res) => {
   //   currency: req.query.currency,
   //   // orderId: req.query.orderId, 訂單編號
   //   orderId: new Date().getTime(),
-  //   confirmUrl: 'http://localhost:3000/pay-confirm',
+  //   confirmUrl: 'http://localhost:3000/PayConfirmed',
   // }
 
   /*
@@ -132,17 +132,18 @@ router.get('/reserve', (req, res) => {
   })
 })
 
+//檢查訂單狀態 先不放
 // Router configuration to start payment.
-router.get('/checking', (req, res) => {
-  // record order status value to 'pending'
-  const status = cache.get(req.query.orderId)
+// router.get('/checking', (req, res) => {
+//   // record order status value to 'pending'
+//   const status = cache.get(req.query.orderId)
 
-  if (!status) {
-    res.json({ status: 'not exist' })
-  }
+//   if (!status) {
+//     res.json({ status: 'not exist' })
+//   }
 
-  res.json({ status })
-})
+//   res.json({ status })
+// })
 
 // Router configuration to receive notification when user approves payment.
 router.get('/confirm', (req, res) => {
@@ -153,7 +154,7 @@ router.get('/confirm', (req, res) => {
   // Retrieve the reservation from database.
   console.log('L108-', req.query.transactionId)
 
-  /*
+  /*    交易編號
   L108- 2022111300732029110
   */
 
