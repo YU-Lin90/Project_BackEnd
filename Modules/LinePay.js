@@ -18,6 +18,7 @@ const pay = new line_pay({
 
 // Router configuration to start payment.
 router.get('/reserve', (req, res) => {
+  console.log(pay);
   let options = {
     amount: 2800,
     productName: '隨饗',

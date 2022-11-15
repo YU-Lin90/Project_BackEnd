@@ -157,11 +157,19 @@ app.use("/LinePay",require("./Modules/LinePay"));
 //會員紅利點數(資料)
 app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
 
-
+//客服
 app.use("/Member/ChatServiceToAdmin", [memberTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
 
 //店家
+//客服
 app.use("/Store/ChatServiceToAdmin",[storeTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
+//店家訂單(資料)
+app.use("/StoreOrders",[storeTokenLoginCheck], require("./API/Store/CheckOrder"));
+//店家訂單(動作)
+app.use("/StoreConfirmOrders",[storeTokenLoginCheck], require("./API/Store/ConfirmOrder"));
+
+
+
 //外送員
 
 app.use("/Deliver/ChatServiceToAdmin", [deliverTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
