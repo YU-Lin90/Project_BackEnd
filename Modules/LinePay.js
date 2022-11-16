@@ -20,7 +20,7 @@ const pay = new line_pay({
 router.get('/reserve', (req, res) => {
   console.log(pay);
   let options = {
-    amount: 2800,
+    amount: 200,
     productName: '隨饗',
     currency: 'TWD',
     orderId: new Date().getTime(),

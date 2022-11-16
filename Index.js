@@ -168,6 +168,30 @@ app.use("/StoreOrders",[storeTokenLoginCheck], require("./API/Store/CheckOrder")
 //店家訂單(動作)
 app.use("/StoreConfirmOrders",[storeTokenLoginCheck], require("./API/Store/ConfirmOrder"));
 
+//獲得正整數範圍，有含上限(最小值,最大值)
+function getIntRange(min, max) {
+  return Math.floor(Math.random() * (max + 1 - min) + min);
+}
+
+//獲得正整數 含輸入的數到0 
+function getIntTo0(x) {
+  return Math.floor(Math.random() * (x + 1));
+}
+//獲得正整數 含輸入的數到1 
+function getIntTo1(x) {
+  return Math.floor(Math.random() * x + 1);
+}
+
+//隨機生成訂單用
+app.get('/randomOrder', async(req,res)=>{
+
+  const SQL = "INSERT INTO `orders`(`member_sid`,`shop_sid` , `shop_memo`, `order_time`, `order_total`, `sale`, `paid`, `pay_method`, `total_amount`) VALUES (?,?,?,NOW(),?,?,?,?,?)"
+  const price  = getIntTo1(20)*50
+  const [result]= await DB.query(SQL,[getIntTo1(50),89,'',price,price,1,0,getIntTo1(20)])
+  console.log(result);
+  res.json(result)
+})
+
 
 
 //外送員
