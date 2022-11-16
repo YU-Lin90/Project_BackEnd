@@ -154,4 +154,13 @@ router.use("/checkCompletedDetail", async (req, res) => {
   return res.json(output);
 });
 
+router.use("/readTime", async (req, res) => {
+  const storeSid = req.token.sid
+  const sql = "SELECT `wait_time` FROM `shop` WHERE `sid` = ?"
+  const [[{wait_time}]] = await DB.query(sql,storeSid)
+
+  res.json(wait_time)
+})
+
+
 module.exports = router;

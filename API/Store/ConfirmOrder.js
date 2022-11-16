@@ -50,6 +50,18 @@ router.use("/CompleteOrder", async (req, res) => {
 
   // return res.json(1);
 });
+router.use("/setWaitTime", async (req, res) => {
+
+  const setTime = req.body.waitTime
+  const shopSid = req.token.sid
+
+  const sql = "UPDATE `shop` SET `wait_time`= ? WHERE `sid`=?"
+  const [{affectedRows}] = await DB.query(sql,[setTime,shopSid])
+  return res.json(affectedRows)
+})
+
+
+
 
 
 module.exports = router;
