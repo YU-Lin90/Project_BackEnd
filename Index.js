@@ -140,16 +140,28 @@ const adminTokenLoginCheck = async (req, res, next) => {
   }
 };
 
-
-
-
 //===============================================分隔線================================================
 
 
 
 //購物流程
 //LinePay
-app.use("/LinePay",require("./Modules/LinePay"));
+app.post('/LinePaySetOrder',memberTokenLoginCheck,require("./API/Shopping/BeforeLinePay"))
+
+app.use("/LinePay",require("./API/Shopping/LinePay"));
+app.use("/oldLinePay",require("./Modules/LinePay"));
+
+
+
+
+//結帳頁 會員資料(資料)
+app.get("/PayGetProfile",memberTokenLoginCheck,async (req, res) => {
+  const sql = "SELECT `name`,`phone`,email FROM `member` where `sid` = ?"
+  const [[result]] = await DB.query(sql,req.token.sid)
+  res.json(result)
+})
+//結帳頁 現金支付(動作)
+app.post('/CashPay',memberTokenLoginCheck,require('./API/Shopping/CashPay'))
 
 
 
