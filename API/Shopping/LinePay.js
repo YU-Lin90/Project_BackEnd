@@ -16,7 +16,7 @@ router.get('/reserve', (req, res) => {
   console.log(req.query); 
   const datas = req.query
   //{ productName: '隨饗', amount: '1000', currency: 'TWD', orderId: '73' }
-  // return
+  //正式環境這裡應該只傳訂單編號 然後到資料庫抓資料傳送
   let options = {
     amount: datas.amount,
     productName: '隨饗',

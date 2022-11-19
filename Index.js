@@ -28,9 +28,11 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 app.use(
   cors({
-    origin: ["http://localhost:3000",
-    "http://192.168.35.16:3000",
-    "http://192.168.1.107:3000"], //這邊改成他的伺服器(白名單)，有多個的時候用陣列表示
+    origin: [
+      "http://localhost:3000",
+      "http://192.168.35.16:3000",
+      "http://192.168.1.107:3000",
+    ], //這邊改成他的伺服器(白名單)，有多個的時候用陣列表示
     optionsSuccessStatus: 200,
   })
 );
@@ -73,7 +75,7 @@ const memberTokenLoginCheck = async (req, res, next) => {
     if (!result) {
       return res.json(0);
     } else {
-      req.token = parsedToken
+      req.token = parsedToken;
       next();
     }
   }
@@ -92,7 +94,7 @@ const storeTokenLoginCheck = async (req, res, next) => {
     if (!result) {
       return res.json(0);
     } else {
-      req.token = parsedToken
+      req.token = parsedToken;
       next();
     }
   }
@@ -111,10 +113,9 @@ const deliverTokenLoginCheck = async (req, res, next) => {
     if (!result) {
       return res.json(0);
     } else {
-      req.token = parsedToken
+      req.token = parsedToken;
       next();
     }
-
   }
 };
 //管理員
@@ -134,106 +135,158 @@ const adminTokenLoginCheck = async (req, res, next) => {
     if (!result) {
       return res.json(0);
     } else {
-      req.token = parsedToken
+      req.token = parsedToken;
       next();
     }
   }
 };
 
 //===============================================分隔線================================================
-
-
+//時間格式轉換 直接回傳值  傳入時間,新格式   changeTime(oldTime,"YYYY-MM-DD HH:mm:ss")
+function changeTime(oldTime,form) {
+  return moment(oldTime).tz("Asia/Taipei").format(form);
+}
 
 //購物流程
 //LinePay
-app.post('/LinePaySetOrder',memberTokenLoginCheck,require("./API/Shopping/BeforeLinePay"))
+app.post(
+  "/LinePaySetOrder",
+  memberTokenLoginCheck,
+  require("./API/Shopping/BeforeLinePay")
+);
 
-app.use("/LinePay",require("./API/Shopping/LinePay"));
-app.use("/oldLinePay",require("./Modules/LinePay"));
+app.use("/LinePay", require("./API/Shopping/LinePay"));
+app.use("/oldLinePay", require("./Modules/LinePay"));
 
-
-
+//結帳頁 優惠券資料(資料)
+app.get("/PayGetCouponDetail", memberTokenLoginCheck, async (req, res) => {
+  const memberSid = req.token.sid;
+  const shopSid = req.query.shopSid || 89;
+  const sql =
+    "SELECT c.* ,cc.`coupon_name`,cc.`shop_sid`,cc.`sale_detail`,cc.`use_range`  FROM `coupon` c LEFT JOIN `coupon_content` cc ON c.`coupon_sid`= cc.`sid`  WHERE c.`member_sid`= ? AND c.is_used = 0 AND cc.`expire` > NOW() AND (cc.`shop_sid` = ? OR cc.`shop_sid` = 101)";
+  const [result] = await DB.query(sql, [memberSid, shopSid]);
+  // for in 的EL  是 KEY值   for of 是內容
+  for(let element of result){
+    console.log(element);
+    element.expire = changeTime(element.expire,"YY/MM/DD")
+    element.get_time = changeTime(element.get_time,"YY/MM/DD")
+  }
+  res.json(result);
+});
 
 //結帳頁 會員資料(資料)
-app.get("/PayGetProfile",memberTokenLoginCheck,async (req, res) => {
-  const sql = "SELECT `name`,`phone`,email FROM `member` where `sid` = ?"
-  const [[result]] = await DB.query(sql,req.token.sid)
-  res.json(result)
-})
+app.get("/PayGetProfile", memberTokenLoginCheck, async (req, res) => {
+  const sql = "SELECT `name`,`phone`,email FROM `member` where `sid` = ?";
+  const [[result]] = await DB.query(sql, req.token.sid);
+  res.json(result);
+});
 //結帳頁 現金支付(動作)
-app.post('/CashPay',memberTokenLoginCheck,require('./API/Shopping/CashPay'))
-
-
+app.post("/CashPay", memberTokenLoginCheck, require("./API/Shopping/CashPay"));
+//結帳頁 獲得等待時間(資料)
+app.get("/PayGetWaitTime", async (req, res) => {
+  //PayGetWaitTime/?sid=
+  const sql = "SELECT `wait_time` FROM `shop` WHERE `sid` = ?";
+  const [[{ wait_time }]] = await DB.query(sql, req.query.sid);
+  res.json(wait_time);
+});
 
 //會員
 //會員紅利點數(資料)
 app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
 
 //客服
-app.use("/Member/ChatServiceToAdmin", [memberTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
+app.use(
+  "/Member/ChatServiceToAdmin",
+  [memberTokenLoginCheck],
+  require("./Modules/ServiceSystemForDB")
+);
 
 //店家
 //客服
-app.use("/Store/ChatServiceToAdmin",[storeTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
+app.use(
+  "/Store/ChatServiceToAdmin",
+  [storeTokenLoginCheck],
+  require("./Modules/ServiceSystemForDB")
+);
 //店家訂單(資料)
-app.use("/StoreOrders",[storeTokenLoginCheck], require("./API/Store/CheckOrder"));
+app.use(
+  "/StoreOrders",
+  [storeTokenLoginCheck],
+  require("./API/Store/CheckOrder")
+);
 //店家訂單(動作)
-app.use("/StoreConfirmOrders",[storeTokenLoginCheck], require("./API/Store/ConfirmOrder"));
+app.use(
+  "/StoreConfirmOrders",
+  [storeTokenLoginCheck],
+  require("./API/Store/ConfirmOrder")
+);
 
 //獲得正整數範圍，有含上限(最小值,最大值)
 function getIntRange(min, max) {
   return Math.floor(Math.random() * (max + 1 - min) + min);
 }
 
-//獲得正整數 含輸入的數到0 
+//獲得正整數 含輸入的數到0
 function getIntTo0(x) {
   return Math.floor(Math.random() * (x + 1));
 }
-//獲得正整數 含輸入的數到1 
+//獲得正整數 含輸入的數到1
 function getIntTo1(x) {
   return Math.floor(Math.random() * x + 1);
 }
 
 //隨機生成訂單用
-app.get('/randomOrder', async(req,res)=>{
-
-  const SQL = "INSERT INTO `orders`(`member_sid`,`shop_sid` , `shop_memo`, `order_time`, `order_total`, `sale`, `paid`, `pay_method`, `total_amount`) VALUES (?,?,?,NOW(),?,?,?,?,?)"
-  const price  = getIntTo1(20)*50
-  const [result]= await DB.query(SQL,[getIntTo1(50),89,'',price,price,1,0,getIntTo1(20)])
+app.get("/randomOrder", async (req, res) => {
+  const SQL =
+    "INSERT INTO `orders`(`member_sid`,`shop_sid` , `shop_memo`, `order_time`, `order_total`, `sale`, `paid`, `pay_method`, `total_amount`) VALUES (?,?,?,NOW(),?,?,?,?,?)";
+  const price = getIntTo1(20) * 50;
+  const [result] = await DB.query(SQL, [
+    getIntTo1(50),
+    89,
+    "",
+    price,
+    price,
+    1,
+    0,
+    getIntTo1(20),
+  ]);
   console.log(result);
-  res.json(result)
-})
+  res.json(result);
+});
+//購物車測試頁叫資料
+app.get("/getTempProductList", async (req, res) => {
+  const sql = "SELECT * FROM `products` WHERE `shop_sid` = 89";
 
+  const [result] = await DB.query(sql);
 
+  res.json(result);
+});
 
 //外送員
 
-app.use("/Deliver/ChatServiceToAdmin", [deliverTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
+app.use(
+  "/Deliver/ChatServiceToAdmin",
+  [deliverTokenLoginCheck],
+  require("./Modules/ServiceSystemForDB")
+);
 
 //管理者
 //優惠券管理(資料)
 app.use(
-  "/AdminCouponRenderApi",  
+  "/AdminCouponRenderApi",
   require("./Api/Admin/Coupon/Admin_CouponRenderApi")
 );
 //優惠券管理(動作)
 app.post(
-  "/AdminCouponEditApi",adminTokenLoginCheck,  
+  "/AdminCouponEditApi",
+  adminTokenLoginCheck,
   require("./Api/Admin/Coupon/Admin_CouponEditApi")
 );
-app.use('/AdminService',adminTokenLoginCheck,require("./Api/Admin/Service/Admin_ServiceRenderApi"));
-
-
-
-
-
-
-
-
-
-
-
-
+app.use(
+  "/AdminService",
+  adminTokenLoginCheck,
+  require("./Api/Admin/Service/Admin_ServiceRenderApi")
+);
 
 //===============================================分隔線================================================
 //Token登入
@@ -246,7 +299,7 @@ app.use("/LoginCheck", require("./Modules/TokonLoginCheckApi"));
 //設定根目錄資料夾 通常放在404前面
 app.use(express.static("Public"));
 
-app.use('/images',express.static("Images"));
+app.use("/images", express.static("Images"));
 
 //設定PORT
 const port = process.env.SERVER_PORT || 3001;
@@ -264,5 +317,5 @@ require(__dirname + "/Modules/WebSocket")(server);
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 //404頁面 放最後
 app.use((req, res) => {
-  res.status(404).send('No Pages');
+  res.status(404).send("No Pages");
 });

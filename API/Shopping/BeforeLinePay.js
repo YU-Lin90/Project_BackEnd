@@ -35,13 +35,14 @@ router.use("/", async (req, res) => {
   const coupon_sid = postData.couponSid || 0
   const saled = Number(order_total) - Number(postData.couponCutAmount)
   const daily_coupon_sid = postData.dailyCouponSid || 0
+  const deliverFee = postData.deliverFee
   const cook_time = 40
   const total_amount = postData.details.shopTotal
   const receiveName = postData.receiveName
   const receivePhone = postData.receivePhone
   const sendAddress = postData.sendAddress
 
-  const valueArray = [memberSid,shopSid,shopMemo,deliverMemo,order_total,coupon_sid,saled,0,0,1,daily_coupon_sid,cook_time,total_amount,receiveName,receivePhone,sendAddress]
+  const valueArray = [memberSid,shopSid,shopMemo,deliverMemo,order_total,coupon_sid,saled,0,1,daily_coupon_sid,deliverFee,cook_time,total_amount,receiveName,receivePhone,sendAddress]
 
   console.log(postData);
   const sql = "INSERT INTO `orders`(`member_sid`, `shop_sid`, `shop_memo`, `deliver_memo`, `order_time`, `order_total`, `coupon_sid`, `sale`, `paid`, `pay_method`, `daily_coupon_sid`, `deliver_fee`, `cook_time`, `total_amount`, `receive_name`, `receive_phone`, `receive_address`) VALUES (?,?,?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?,?)"

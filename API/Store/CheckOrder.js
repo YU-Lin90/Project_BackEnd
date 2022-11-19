@@ -8,7 +8,7 @@ router.use("/checkDisConfirm", async (req, res) => {
   let storeSid = req.token.sid;
 
   let sql =
-    "SELECT o.`sid`, o.`member_sid`, o.`shop_sid`, o.`store_order_sid`, o.`shop_memo`, o.`order_time`, o.`order_total`,  o.`sale`, o.`paid`, o.`pay_method`, o.`cook_time`,o.`total_amount`, m.`name` FROM `orders` o LEFT JOIN `member` m ON m.`sid` = o.`member_sid` WHERE o.`shop_sid` = ? AND o.`shop_order_status` = 0 AND o.`paid` = 1 ";
+    "SELECT o.`sid`, o.`member_sid`, o.`shop_sid`, o.`store_order_sid`, o.`shop_memo`, o.`order_time`, o.`order_total`,  o.`sale`, o.`paid`, o.`pay_method`, o.`cook_time`,o.`total_amount`, m.`name` FROM `orders` o LEFT JOIN `member` m ON m.`sid` = o.`member_sid` WHERE o.`shop_sid` = ? AND o.`shop_order_status` = 0  ORDER BY o.`order_time` DESC";
 
   let [getData] = await DB.query(sql, storeSid);
 
@@ -62,7 +62,7 @@ router.use("/checkConfirmed", async (req, res) => {
   let storeSid = req.token.sid;
 
   let sql =
-    "SELECT o.`sid`, o.`member_sid`, o.`shop_sid`, o.`store_order_sid`, o.`order_time`, o.`order_total`, o.`sale`, o.`deliver_fee`, o.`shop_order_status`,o.`total_amount`, m.`name` ,so.`shop_accept_time` FROM `orders` o LEFT JOIN `member` m ON m.`sid` = o.`member_sid` LEFT JOIN `shop_order` so ON o.`store_order_sid` = so.`sid` WHERE o.`shop_order_status` =1 AND o.`shop_sid` = ? AND so.`cook_finish` = 0";
+    "SELECT o.`sid`, o.`member_sid`, o.`shop_sid`, o.`store_order_sid`, o.`order_time`, o.`order_total`, o.`sale`, o.`deliver_fee`, o.`shop_order_status`,o.`total_amount`, m.`name` ,so.`shop_accept_time` FROM `orders` o LEFT JOIN `member` m ON m.`sid` = o.`member_sid` LEFT JOIN `shop_order` so ON o.`store_order_sid` = so.`sid` WHERE o.`shop_order_status` =1 AND o.`shop_sid` = ? AND so.`cook_finish` = 0 ORDER BY so.`shop_accept_time` DESC";
 
   let [getData] = await DB.query(sql, storeSid);
 
@@ -112,7 +112,7 @@ router.use("/checkCompleted", async (req, res) => {
   let storeSid = req.token.sid;
 
   let sql =
-  "SELECT o.`sid`, o.`member_sid`,o.`deliver_sid`, o.`shop_sid`, o.`store_order_sid`, o.`order_time`, o.`order_total`, o.`sale`, o.`deliver_fee`, o.`shop_order_status`,o.`total_amount`, m.`name` ,so.`shop_accept_time`,so.`shop_complete_time` ,d.name deliver_name FROM `orders` o LEFT JOIN `member` m ON m.`sid` = o.`member_sid` LEFT JOIN `shop_order` so ON o.`store_order_sid` = so.`sid` LEFT JOIN `deliver` d ON o.`deliver_sid` = d.sid WHERE o.`shop_order_status` =1 AND o.`shop_sid` = ? AND so.`cook_finish` = 1";
+  "SELECT o.`sid`, o.`member_sid`,o.`deliver_sid`, o.`shop_sid`, o.`store_order_sid`, o.`order_time`, o.`order_total`, o.`sale`, o.`deliver_fee`, o.`shop_order_status`,o.`total_amount`, m.`name` ,so.`shop_accept_time`,so.`shop_complete_time` ,d.name deliver_name FROM `orders` o LEFT JOIN `member` m ON m.`sid` = o.`member_sid` LEFT JOIN `shop_order` so ON o.`store_order_sid` = so.`sid` LEFT JOIN `deliver` d ON o.`deliver_sid` = d.sid WHERE o.`shop_order_status` =1 AND o.`shop_sid` = ? AND so.`cook_finish` = 1 ORDER BY so.`shop_complete_time` DESC";
 
   let [getData] = await DB.query(sql, storeSid);
 
