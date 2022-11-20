@@ -154,45 +154,31 @@ app.post(
   memberTokenLoginCheck,
   require("./API/Shopping/BeforeLinePay")
 );
-
 app.use("/LinePay", require("./API/Shopping/LinePay"));
 app.use("/oldLinePay", require("./Modules/LinePay"));
 
-//結帳頁 優惠券資料(資料)
-app.get("/PayGetCouponDetail", memberTokenLoginCheck, async (req, res) => {
-  const memberSid = req.token.sid;
-  const shopSid = req.query.shopSid || 89;
-  const sql =
-    "SELECT c.* ,cc.`coupon_name`,cc.`shop_sid`,cc.`sale_detail`,cc.`use_range`  FROM `coupon` c LEFT JOIN `coupon_content` cc ON c.`coupon_sid`= cc.`sid`  WHERE c.`member_sid`= ? AND c.is_used = 0 AND cc.`expire` > NOW() AND (cc.`shop_sid` = ? OR cc.`shop_sid` = 101)";
-  const [result] = await DB.query(sql, [memberSid, shopSid]);
-  // for in 的EL  是 KEY值   for of 是內容
-  for(let element of result){
-    console.log(element);
-    element.expire = changeTime(element.expire,"YY/MM/DD")
-    element.get_time = changeTime(element.get_time,"YY/MM/DD")
-  }
-  res.json(result);
-});
 
-//結帳頁 會員資料(資料)
-app.get("/PayGetProfile", memberTokenLoginCheck, async (req, res) => {
-  const sql = "SELECT `name`,`phone`,email FROM `member` where `sid` = ?";
-  const [[result]] = await DB.query(sql, req.token.sid);
-  res.json(result);
-});
-//結帳頁 現金支付(動作)
-app.post("/CashPay", memberTokenLoginCheck, require("./API/Shopping/CashPay"));
+//結帳頁顯示(資料)
+app.use("/Pay",memberTokenLoginCheck,require("./API/Shopping/PayGetDatas"))
 //結帳頁 獲得等待時間(資料)
 app.get("/PayGetWaitTime", async (req, res) => {
   //PayGetWaitTime/?sid=
   const sql = "SELECT `wait_time` FROM `shop` WHERE `sid` = ?";
   const [[{ wait_time }]] = await DB.query(sql, req.query.sid);
+  console.log(wait_time);
   res.json(wait_time);
 });
 
+//結帳頁 現金支付(動作)
+app.post("/CashPay", memberTokenLoginCheck, require("./API/Shopping/CashPay"));
+
 //會員
-//會員紅利點數(資料)
+//會員中心紅利點數(資料)
 app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
+//會員中心 現在訂單 (資料)
+app.use("/MemberOrderCheck", memberTokenLoginCheck, require("./API/Member/Member_CheckOrder"));
+
+
 
 //客服
 app.use(
