@@ -21,6 +21,7 @@ const fs = require("fs").promises;
 const { v4: getv4 } = require("uuid");
 const app = express();
 const jwt = require("jsonwebtoken");
+const orderSocket = express();
 
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 //跨域來源請求---React
@@ -297,8 +298,19 @@ const server = app.listen(port, () => {
 
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 //WebSocket
-//先不開 之後設定好再開
 require(__dirname + "/Modules/WebSocket")(server);
+
+const orderServer = orderSocket.listen('3200', () => {
+  console.log("訂單伺服器啟動，埠號:", '3200');
+});
+require(__dirname + "/Modules/OrderWebSocket")(orderServer);
+
+//const deliverServer = express().listen('3500', () => {
+//   console.log("外送進度伺服器啟動，埠號:", '3500');
+// });;
+//require(__dirname + "/Modules/DeliverWebSocket")(deliverServer);
+
+
 
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 //404頁面 放最後
