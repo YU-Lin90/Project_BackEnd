@@ -21,6 +21,7 @@ const moment = require("moment-timezone");
   deliverMemo:'外送員備註'
 }*/
 router.use("/", async (req, res) => {
+  // const output = {}
   const postData = req.body
   const productDatas = postData.details.list
   const memberSid = req.token.sid
@@ -71,7 +72,7 @@ router.use("/", async (req, res) => {
   //會員資料表更新
   const memberPointSql = "UPDATE `member` SET `point` = `point` + ?  WHERE `sid` = ?"
   const [memberResult] = await DB.query(memberPointSql,[newPoint,memberSid])
-  output.memberResult = memberResult
+  // output.memberResult = memberResult
   //點數明細資料表更新
   const pointSql = "INSERT INTO `point_detail`(`member_sid`, `point_amount`, `point_change_time`, `point_change_method`) VALUES (?,?,NOW(),?)"  
   const pointInsertArray  = [memberSid,newPoint,1]

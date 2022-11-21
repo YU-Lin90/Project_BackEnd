@@ -32,11 +32,19 @@ router.get("/OrderDetails", async (req, res) => {
     "SELECT o.* , s.`name` FROM `orders` o LEFT JOIN `shop` s ON s.`sid` = o.`shop_sid` WHERE o.`member_sid` = ? AND o.`sid` = ?";
 
   const [[orderResult]] = await DB.query(sql, [memberSid, orderSid]);
+  const orderId =
+    "M" + changeTime(orderResult.order_time, "YYMMDD") + orderResult.sid;
+  orderResult.orderId = orderId;
   orderResult.order_time = changeTime(
     orderResult.order_time,
     "YYYY/MM/DD HH:mm:ss"
   );
+
   output.orderResult = orderResult;
+
+  const productSql = "SELECT od.* ,p.name FROM `order_detail` od LEFT JOIN `products` p ON od.`product_sid` = p.`sid` WHERE od.`order_sid` = ?"
+  const [productResult] = await DB.query(productSql,orderSid)
+  output.productResult = productResult
   // console.log(orderResult);
   //店家接單狀態
   const storeAcept = !!orderResult.shop_order_status;

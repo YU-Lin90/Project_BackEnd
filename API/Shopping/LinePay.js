@@ -22,6 +22,7 @@ router.get('/reserve', (req, res) => {
     productName: '隨饗',
     currency: 'TWD',
     orderId: datas.orderId,
+    //TODO 這裡路徑要改
     confirmUrl: 'http://localhost:3000/PayConfirmed',
   }
   /*
