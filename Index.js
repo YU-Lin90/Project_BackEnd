@@ -178,7 +178,8 @@ app.post("/CashPay", memberTokenLoginCheck, require("./API/Shopping/CashPay"));
 app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
 //會員中心 現在訂單 (資料)
 app.use("/MemberOrderCheck", memberTokenLoginCheck, require("./API/Member/Member_CheckOrder"));
-
+//會員中心 歷史訂單(資料)
+app.use("/MemberOldOrder",memberTokenLoginCheck,require("./API/Member/Member_CheckOldOrder"))
 
 
 //客服
