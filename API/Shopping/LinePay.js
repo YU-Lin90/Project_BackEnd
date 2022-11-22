@@ -17,13 +17,13 @@ router.get('/reserve', (req, res) => {
   const datas = req.query
   //{ productName: '隨饗', amount: '1000', currency: 'TWD', orderId: '73' }
   //正式環境這裡應該只傳訂單編號 然後到資料庫抓資料傳送
+  const siteName = datas.siteName
   let options = {
     amount: datas.amount,
     productName: '隨饗',
     currency: 'TWD',
     orderId: datas.orderId,
-    //TODO 這裡路徑要改
-    confirmUrl: 'http://localhost:3000/PayConfirmed',
+    confirmUrl: `http://${siteName}:3000/PayConfirmed`,
   }
   /*
   {

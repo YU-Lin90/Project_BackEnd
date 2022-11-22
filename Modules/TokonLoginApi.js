@@ -24,13 +24,13 @@ router.use("/Member", async (req, res) => {
     "SELECT `sid`, `name`, `email`, `password` FROM `member` WHERE `email` LIKE ? ";
 
   let [[result]] = await DB.query(loginSql, [email]);
-  if(!result){
+  if (!result) {
     output.errorType = "帳號或密碼錯誤";
     return res.json(output);
   }
   let passStat = false;
   result.password === password ? (passStat = true) : null;
-  console.log('會員登入'+result);
+  console.log('會員登入' + result);
   if (!result) {
     output.errorType = "帳號或密碼錯誤";
     return res.json(output);
@@ -39,15 +39,10 @@ router.use("/Member", async (req, res) => {
     return res.json(output);
   } else {
     output.success = true;
-    const signToken = jwt.sign(
-      {
-        sid: result.sid,
-        email: result.email,
-        name: result.name,
-        side:1
-      },
-      process.env.JWT_SECRET
-    );
+    const signToken = jwt.sign({
+      sid: result.sid, email: result.email, name: result.name,
+      side: 1
+    }, process.env.JWT_SECRET);
     output.token = signToken;
     output.name = result.name
     return res.json(output);
@@ -57,7 +52,7 @@ router.use("/Member", async (req, res) => {
 //店家+管理員
 router.use("/Store", async (req, res) => {
   const output = {
-    errorType:"",
+    errorType: "",
     success: false,
     token: null,
   };
@@ -92,7 +87,7 @@ router.use("/Store", async (req, res) => {
         sid: result.sid,
         email: result.email,
         name: result.name,
-        side:4
+        side: 4
       },
       process.env.JWT_SECRET
     );
@@ -107,7 +102,7 @@ router.use("/Store", async (req, res) => {
         sid: result.sid,
         email: result.email,
         name: result.name,
-        side:2
+        side: 2
       },
       process.env.JWT_SECRET
     );
@@ -155,7 +150,7 @@ router.use("/Deliver", async (req, res) => {
         sid: result.sid,
         email: result.email,
         name: result.name,
-        side:3
+        side: 3
       },
       process.env.JWT_SECRET
     );
