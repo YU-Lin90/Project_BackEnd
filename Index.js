@@ -180,6 +180,8 @@ app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
 app.use("/MemberOrderCheck", memberTokenLoginCheck, require("./API/Member/Member_CheckOrder"));
 //會員中心 歷史訂單(資料)
 app.use("/MemberOldOrder",memberTokenLoginCheck,require("./API/Member/Member_CheckOldOrder"))
+//會員中心 給予評價(動作)
+app.use("/OrderCommand",memberTokenLoginCheck,require("./API/Member/Member_OrderCommand"))
 
 
 //客服
