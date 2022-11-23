@@ -295,23 +295,25 @@ app.use("/images", express.static("Images"));
 const port = process.env.SERVER_PORT || 3001;
 //設定監聽port
 const server = app.listen(port, () => {
-  console.log("伺服器啟動，埠號:", port);
+  console.log("路由伺服器啟動，埠號:", port);
 });
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
-//WebSocket
+//WebSocket 客服
 require(__dirname + "/Modules/WebSocket")(server);
 
+//傳送訂單進度
 const orderServer = orderSocket.listen('3200', () => {
   console.log("訂單伺服器啟動，埠號:", '3200');
 });
 require(__dirname + "/Modules/OrderWebSocket")(orderServer);
 
-//const deliverServer = express().listen('3500', () => {
+//傳送GEOLOCATIN
+// const deliverServer = express().listen('3500', () => {
 //   console.log("外送進度伺服器啟動，埠號:", '3500');
 // });;
-//require(__dirname + "/Modules/DeliverWebSocket")(deliverServer);
+// require(__dirname + "/Modules/DeliverWebSocket")(deliverServer);
 
 
 

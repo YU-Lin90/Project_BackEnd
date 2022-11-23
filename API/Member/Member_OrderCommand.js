@@ -7,11 +7,10 @@ router.post("/store", async (req, res) => {
   const postData = req.body
   const { command, stars, orderSid, targetSid } = postData
   const memberSid = req.token.sid
-  console.log(postData);
+  // console.log(postData);
 
   const sql = "INSERT INTO `shop_evaluation`(`order_sid`, `member_sid`, `shop_sid`, `evaluation_score`, `evaluation_content`, `evaluation_time`) VALUES (?,?,?,?,?,NOW())"
   const [result] = await DB.query(sql,[orderSid,memberSid,targetSid,stars,command])
-
   res.json(result)
 })
 router.post("/deliver", async (req, res) => {
@@ -19,7 +18,7 @@ router.post("/deliver", async (req, res) => {
   const postData = req.body //{ command: '', stars: 1, orderSid: 112, targetSid: 1 }
   const { command, stars, orderSid, targetSid } = postData
   const memberSid = req.token.sid
-  console.log(postData);
+  // console.log(postData);
   const sql ="INSERT INTO `deliver_evaluation`(`order_sid`, `member_sid`, `deliver_sid`, `evaluation_score`, `evaluation_content`, `evaluation_time`) VALUES (?,?,?,?,?,NOW())" 
   const [result] = await DB.query(sql,[orderSid,memberSid,targetSid,stars,command])
   output.result = result
