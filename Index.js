@@ -192,6 +192,16 @@ app.use(
 );
 
 //店家
+app.get('/store-list',async (req, res) => {
+  const sql = 'SELECT * FROM `shop` WHERE 1'
+  const [rows] = await DB.query(sql)
+  res.send(rows)
+})
+
+app.use("/store-admin/overview", require("./routes/overview"));
+app.use("/store-admin/type", require("./routes/type"));
+app.use("/store-admin/product", require("./routes/product"));
+app.use("/store-admin/option", require("./routes/option"));
 //客服
 app.use(
   "/Store/ChatServiceToAdmin",
