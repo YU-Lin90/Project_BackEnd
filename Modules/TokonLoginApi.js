@@ -45,6 +45,7 @@ router.use("/Member", async (req, res) => {
     }, process.env.JWT_SECRET);
     output.token = signToken;
     output.name = result.name
+    output.sid = String(result.sid);
     return res.json(output);
   }
 });

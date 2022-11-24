@@ -20,7 +20,7 @@ const fileFilter = (req,file,callback)=>{
 const storage = multer.diskStorage({
     destination:(req,file,callback)=>{
         //儲存位置
-        callback(null, __dirname + '/../public/uploads')
+        callback(null, __dirname + '/../uploads')
     },
     filename:(req,file,callback)=>{
         const ext = extMap[file.mimetype];

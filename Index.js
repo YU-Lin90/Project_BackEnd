@@ -184,7 +184,19 @@ app.use("/MemberOrderCheck", memberTokenLoginCheck, require("./API/Member/Member
 app.use("/MemberOldOrder",memberTokenLoginCheck,require("./API/Member/Member_CheckOldOrder"))
 //會員中心 給予評價(動作)
 app.use("/OrderCommand",memberTokenLoginCheck,require("./API/Member/Member_OrderCommand"))
+//===============================================分隔線================================================
+//錚
+//會員紅利點數(資料)
+app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
+//會員
+app.use('/MemberLogin', require("./API/Member/address-book"));
 
+//會員獲得優惠券(資料)
+app.use("/MemberCouponGetRenderApi", require("./API/Member/Member_CouponGetRenderApi"));
+
+//會員獲得優惠券(動作)
+app.use("/MemberCouponGetApi", require("./API/Member/Member_CouponGetApi"));
+//===============================================分隔線================================================
 
 //客服
 app.use(
@@ -300,6 +312,8 @@ app.use("/LoginCheck", require("./Modules/TokonLoginCheckApi"));
 
 //設定根目錄資料夾 通常放在404前面
 app.use(express.static("Public"));
+app.use("/uploads",express.static("uploads"));
+
 
 app.use("/images", express.static("Images"));
 
