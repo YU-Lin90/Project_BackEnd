@@ -174,7 +174,9 @@ app.get("/PayGetWaitTime", async (req, res) => {
 
 //結帳頁 現金支付(動作)
 app.post("/CashPay", memberTokenLoginCheck, require("./API/Shopping/CashPay"));
-
+//首頁 優惠券資訊(資訊)
+app.get('/HomePageGetCoupon',require("./API/Member/HomePage_Coupon"))
+//===============================================分隔線================================================
 //會員
 //會員中心紅利點數(資料)
 app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
@@ -204,7 +206,7 @@ app.use(
   [memberTokenLoginCheck],
   require("./Modules/ServiceSystemForDB")
 );
-
+//===============================================分隔線================================================
 //店家
 app.get('/store-list',async (req, res) => {
   const sql = 'SELECT * FROM `shop` WHERE 1'
