@@ -13,7 +13,7 @@ router.get("/:shop_sid", async (req, res) => {
   const [option_type_rows] = await db.query(option_type_sql, [shop_sid]);
 
   const option_sql =
-    "SELECT o.*, ot.shop_sid FROM `options` o JOIN `options_types` ot ON o.options_type_sid=ot.sid WHERE ot.shop_sid=?";
+    "SELECT o.*, ot.shop_sid FROM `options` o LEFT JOIN `options_types` ot ON o.options_type_sid=ot.sid WHERE ot.shop_sid=?";
   const [option_rows] = await db.query(option_sql, [shop_sid]);
 
   data.options_types = option_type_rows;

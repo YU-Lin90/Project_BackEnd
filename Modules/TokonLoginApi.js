@@ -107,6 +107,10 @@ router.use("/Store", async (req, res) => {
       },
       process.env.JWT_SECRET
     );
+    output.showedData = {
+      sid: result.sid,
+      name: result.name,
+    }
     output.token = signToken;
     output.name = result.name
 

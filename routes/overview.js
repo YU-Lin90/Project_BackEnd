@@ -19,11 +19,11 @@ router.get("/:shop_sid", async (req, res) => {
 
   // 帶有product_sid的option_type
   const option_type_sql =
-    "SELECT ot.*, otpr.product_sid FROM `options_types` ot JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid JOIN `products` p ON otpr.product_sid=p.sid WHERE p.shop_sid=?";
+    "SELECT ot.*, otpr.product_sid FROM `options_types` ot LEFT JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid LEFT JOIN `products` p ON otpr.product_sid=p.sid WHERE p.shop_sid=?";
   const [option_type_rows] = await db.query(option_type_sql, [shop_sid]);
 
   const option_sql =
-    "SELECT o.*, ot.shop_sid FROM `options` o JOIN `options_types` ot ON o.options_type_sid=ot.sid WHERE ot.shop_sid=?";
+    "SELECT o.*, ot.shop_sid FROM `options` o LEFT JOIN `options_types` ot ON o.options_type_sid=ot.sid WHERE ot.shop_sid=?";
   const [option_rows] = await db.query(option_sql, [shop_sid]);
 
   data.types = type_rows;

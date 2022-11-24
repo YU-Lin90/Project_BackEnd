@@ -13,15 +13,18 @@ router.get("/:shop_sid", async (req, res) => {
 
   const type_sql = "SELECT * FROM products_types WHERE shop_sid=?";
   const [type_rows] = await db.query(type_sql, [shop_sid]);
-
+  console.log(shop_sid);
   // 從資料庫取得商品資料與其類別名稱
   const product_sql =
-    "SELECT p.*,pt.name type_name FROM `products` p JOIN `products_types` pt ON p.`products_type_sid`=pt.`sid` WHERE p.shop_sid=?";
+    "SELECT p.*,pt.name type_name FROM `products` p LEFT JOIN `products_types` pt ON p.`products_type_sid`=pt.`sid` WHERE p.shop_sid=?";
   const [product_rows] = await db.query(product_sql, [shop_sid]);
+  // const [product_rows] = await db.query(product_sql, [89]);
+  console.log(product_rows);
+
 
   // 從資料庫取得選項類別的資料，帶有product_sid
   const option_type_sql =
-    "SELECT ot.*, otpr.product_sid FROM `options_types` ot JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid JOIN `products` p ON otpr.product_sid=p.sid WHERE p.shop_sid=?";
+    "SELECT ot.*, otpr.product_sid FROM `options_types` ot LEFT JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid JOIN `products` p ON otpr.product_sid=p.sid WHERE p.shop_sid=?";
   const [option_type_rows] = await db.query(option_type_sql, [shop_sid]);
 
   const only_option_type_sql =
@@ -55,7 +58,7 @@ router.post("/:shop_sid", upload.single("avatar"), async (req, res) => {
 
   // 找到新增的這個product是那個type，取得這個type裡商品的總數，+1當作這個新商品的order
   const order_sql =
-    "SELECT COUNT(1) num FROM `products_types` pt JOIN `products` p ON   pt.sid = p.products_type_sid WHERE pt.sid=?";
+    "SELECT COUNT(1) num FROM `products_types` pt LEFT JOIN `products` p ON   pt.sid = p.products_type_sid WHERE pt.sid=?";
   const [[{ num: order }]] = await db.query(order_sql, [type]);
 
   // 找到上傳圖片的路徑名稱(檔名)，當作資料表中的src
