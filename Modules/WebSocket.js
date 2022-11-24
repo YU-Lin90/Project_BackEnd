@@ -49,10 +49,16 @@ const createEchoServer = (server) => {
                   ws.close(); 
                   return 
                 }
-                // console.log(tokens);
                 const getSid = tokens.sid;
                 const getName = tokens.name;
                 const side = tokens.side;
+                //先刪掉舊的
+                try {
+                  referenceList[side][getSid].close()
+                  console.log('踢掉舊的');
+                } catch (error) {                  
+                }        
+                // console.log(tokens);
                 console.log('----聊天室連線----');
                 console.log('名稱:'+getName +',side:'+side+',sid:'+getSid);
                 console.log('------------------');
@@ -63,7 +69,7 @@ const createEchoServer = (server) => {
               //1109 0905
             }
             else if(MSG.msg){
-                //不是第一次發言
+                //客服系統
                 //{"msg":訊息,"receive_sid":接收對象SID,"receive_side":接收方,"post_side":3}
                 const postSide = map.get(ws).side;
                 const postSid = map.get(ws).sid;
@@ -97,9 +103,11 @@ const createEchoServer = (server) => {
                 sendData.self = true
                 //最後再傳回本人 再顯示在發訊者畫面上
                 ws.send(JSON.stringify(sendData));
-            }
-            else if(MSG.read){
-              //{"read":true,"receive_sid":接收對象SID,"receive_side":接收方,"post_side":3}
+            }else if (MSG.orderMsg){
+              //訂單中對話
+              //{"orderMsg":訊息,"receive_sid":接收對象SID,"receive_side":接收方}
+              const postSide = map.get(ws).side;
+              const postSid = map.get(ws).sid;
             }
             else{
               ws.close();
