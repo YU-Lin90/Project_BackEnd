@@ -102,7 +102,7 @@ const storeTokenLoginCheck = async (req, res, next) => {
     }
   }
 };
-//外送員
+//外送員test
 const deliverTokenLoginCheck = async (req, res, next) => {
   const tokenGet = req.header("Authorization").replace("Bearer ", "");
   if (tokenGet === "null") {
