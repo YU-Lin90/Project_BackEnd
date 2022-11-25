@@ -42,7 +42,7 @@ router.use("/", async (req, res) => {
   //有登入才叫資料
   else if (req.token.sid === 101) {
     const sql =
-    "SELECT msg.* ,m.name memberName ,s.name storeName FROM(SELECT `post_sid`, `post_side`, MAX(`post_time`)`post_time` FROM`messages`   WHERE`receive_side` = 4  AND`receive_sid` = 101  GROUP BY`post_sid`, `post_side`) msg LEFT JOIN `member` m ON m.`sid` = msg.`post_sid`   AND msg.`post_side` = 1 LEFT JOIN `shop` s ON s.`sid` = msg.`post_sid`  AND msg.`post_side` = 2";
+    "SELECT msg.* ,m.name memberName ,s.name storeName FROM(SELECT `post_sid`, `post_side`, MAX(`post_time`)`post_time` FROM`messages`   WHERE`receive_side` = 4  AND`receive_sid` = 101  GROUP BY`post_sid`, `post_side`) msg LEFT JOIN `member` m ON m.`sid` = msg.`post_sid`   AND msg.`post_side` = 1 LEFT JOIN `shop` s ON s.`sid` = msg.`post_sid`  AND msg.`post_side` = 2 ORDER BY msg.post_time DESC";
 
     let [getData] = await DB.query(sql);
     //這樣叫出來已經照最新排序

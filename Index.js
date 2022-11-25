@@ -34,7 +34,6 @@ app.use(
       "http://192.168.35.16:3000",
       "http://192.168.1.107:3000",
       "http://192.168.34.140:3000",
-
     ], //這邊改成他的伺服器(白名單)，有多個的時候用陣列表示
     optionsSuccessStatus: 200,
   })
@@ -146,7 +145,7 @@ const adminTokenLoginCheck = async (req, res, next) => {
 
 //===============================================分隔線================================================
 //時間格式轉換 直接回傳值  傳入時間,新格式   changeTime(oldTime,"YYYY-MM-DD HH:mm:ss")
-function changeTime(oldTime,form) {
+function changeTime(oldTime, form) {
   return moment(oldTime).tz("Asia/Taipei").format(form);
 }
 
@@ -160,9 +159,8 @@ app.post(
 app.use("/LinePay", require("./API/Shopping/LinePay"));
 app.use("/oldLinePay", require("./Modules/LinePay"));
 
-
 //結帳頁顯示(資料)
-app.use("/Pay",memberTokenLoginCheck,require("./API/Shopping/PayGetDatas"))
+app.use("/Pay", memberTokenLoginCheck, require("./API/Shopping/PayGetDatas"));
 //結帳頁 獲得等待時間(資料)
 app.get("/PayGetWaitTime", async (req, res) => {
   //PayGetWaitTime/?sid=
@@ -175,26 +173,41 @@ app.get("/PayGetWaitTime", async (req, res) => {
 //結帳頁 現金支付(動作)
 app.post("/CashPay", memberTokenLoginCheck, require("./API/Shopping/CashPay"));
 //首頁 優惠券資訊(資訊)
-app.get('/HomePageGetCoupon',require("./API/Member/HomePage_Coupon"))
+app.get("/HomePageGetCoupon", require("./API/Member/HomePage_Coupon"));
 //===============================================分隔線================================================
 //會員
 //會員中心紅利點數(資料)
 app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
 //會員中心 現在訂單 (資料)
-app.use("/MemberOrderCheck", memberTokenLoginCheck, require("./API/Member/Member_CheckOrder"));
+app.use(
+  "/MemberOrderCheck",
+  memberTokenLoginCheck,
+  require("./API/Member/Member_CheckOrder")
+);
 //會員中心 歷史訂單(資料)
-app.use("/MemberOldOrder",memberTokenLoginCheck,require("./API/Member/Member_CheckOldOrder"))
+app.use(
+  "/MemberOldOrder",
+  memberTokenLoginCheck,
+  require("./API/Member/Member_CheckOldOrder")
+);
 //會員中心 給予評價(動作)
-app.use("/OrderCommand",memberTokenLoginCheck,require("./API/Member/Member_OrderCommand"))
+app.use(
+  "/OrderCommand",
+  memberTokenLoginCheck,
+  require("./API/Member/Member_OrderCommand")
+);
 //===============================================分隔線================================================
 //錚
 //會員紅利點數(資料)
 app.use("/MemberPointApi", require("./Api/Member/Member_PointApi"));
 //會員
-app.use('/MemberLogin', require("./API/Member/address-book"));
+app.use("/MemberLogin", require("./API/Member/address-book"));
 
 //會員獲得優惠券(資料)
-app.use("/MemberCouponGetRenderApi", require("./API/Member/Member_CouponGetRenderApi"));
+app.use(
+  "/MemberCouponGetRenderApi",
+  require("./API/Member/Member_CouponGetRenderApi")
+);
 
 //會員獲得優惠券(動作)
 app.use("/MemberCouponGetApi", require("./API/Member/Member_CouponGetApi"));
@@ -208,11 +221,11 @@ app.use(
 );
 //===============================================分隔線================================================
 //店家
-app.get('/store-list',async (req, res) => {
-  const sql = 'SELECT * FROM `shop` WHERE 1'
-  const [rows] = await DB.query(sql)
-  res.send(rows)
-})
+app.get("/store-list", async (req, res) => {
+  const sql = "SELECT * FROM `shop` WHERE 1";
+  const [rows] = await DB.query(sql);
+  res.send(rows);
+});
 
 app.use("/store-admin/overview", require("./routes/overview"));
 app.use("/store-admin/type", require("./routes/type"));
@@ -251,24 +264,86 @@ function getIntTo1(x) {
   return Math.floor(Math.random() * x + 1);
 }
 
-//隨機生成訂單用
+//隨機生成已完成訂單用
 app.get("/randomOrder", async (req, res) => {
-  const SQL =
-    "INSERT INTO `orders`(`member_sid`,`shop_sid` , `shop_memo`, `order_time`, `order_total`, `sale`, `paid`, `pay_method`, `total_amount`) VALUES (?,?,?,NOW(),?,?,?,?,?)";
-  const price = getIntTo1(20) * 50;
-  const [result] = await DB.query(SQL, [
-    getIntTo1(50),
-    89,
-    "",
-    price,
-    price,
-    1,
-    0,
-    getIntTo1(20),
-  ]);
-  console.log(result);
-  res.json(result);
+  const oneHour = 3600 * 1000;
+  const hourPerWeek = 24 * 7;
+  const newOrderDate = getIntRange(5, hourPerWeek) * oneHour;
+  const newDay = new Date(new Date() - newOrderDate) ;
+
+  //1107  總數
+  const product1Amount = getIntTo1(5);
+  //1108 總數
+  const product2Amount = getIntTo1(6);
+
+  const order_total = product1Amount * 120 + product2Amount * 155;
+  const sale = order_total;
+  const fee = getIntTo1(6) * 5;
+  const total_amount = product1Amount + product2Amount;
+  //1107 120
+  //1108 155
+
+  // return res.json(newDay);
+
+  const orderSql =
+    "INSERT INTO `orders`(`member_sid`, `shop_sid`, `deliver_sid`,`order_time`, `order_total`, `sale`, `paid`, `pay_method`, `deliver_fee`, `shop_order_status`, `deliver_order_status`, `total_amount`, `receive_name`, `receive_phone`, `receive_address`, `order_complete`) VALUES (1,89,1,?,?,?,1,0,?,1,1,?,'ゆう','0912345678','你家',1)";
+
+  const orderDetail = [newDay, order_total, sale, fee, total_amount];
+
+  const [{ insertId: orderSid }] = await DB.query(orderSql, orderDetail);
+
+  const detailSql =
+    "INSERT INTO `order_detail`( `order_sid`, `product_sid`, `product_price`, `amount`) VALUES (?,?,?,?)";
+
+  const productDetail1 = [orderSid, 1107, 120, product1Amount];
+
+  const productDetail2 = [orderSid, 1108, 155, product2Amount];
+
+  await DB.query(detailSql, productDetail1);
+  await DB.query(detailSql, productDetail2);
+
+  const shopOrderSql =
+    "INSERT INTO `shop_order`(`member_sid`, `deliver_sid`, `order_sid`, `shop_accept_time`, `shop_complete_time`, `deliver_take`, `shop_sid`, `cook_finish`) VALUES (1,1,?,?,?,1,89,1)";
+  const shop_accept_time =new Date(newDay.getTime() + oneHour)  ;
+  const shop_complete_time = new Date(newDay.getTime() + oneHour * 2) ;
+  const shopOrderDetail = [orderSid, shop_accept_time, shop_complete_time];
+
+  const [{ insertId: shopOrderSid }] = await DB.query(
+    shopOrderSql,
+    shopOrderDetail
+  );
+
+  const deliverOrderSql =
+    "INSERT INTO `deliver_order`( `member_sid`, `shop_sid`, `deliver_sid`, `store_order_sid`, `order_sid`,  `deliver_take_time`, `complete_time`, `order_finish`, `deliver_fee`) VALUES (1,89,1,?,?,?,?,1,?)";
+
+  const deliver_take_time = new Date(newDay.getTime() + oneHour * 3) ;
+  const complete_time = new Date(newDay.getTime() + oneHour * 4) ;
+  const deliverOrderDetail = [
+    shopOrderSid,
+    orderSid,
+    deliver_take_time,
+    complete_time,
+    fee,
+  ];
+
+  const [{ insertId: deliverOrderSid }] = await DB.query(
+    deliverOrderSql,
+    deliverOrderDetail
+  );
+
+  const updateShopOrderSql =
+    " UPDATE `shop_order` SET `deliver_order_sid`=? WHERE `order_sid` = ?";
+
+  await DB.query(updateShopOrderSql, [deliverOrderSid, orderSid]);
+
+  const updateOrderSql =
+    "UPDATE `orders` SET `store_order_sid`= ?,`deliver_order_sid`=? WHERE `sid` = ?";
+
+  await DB.query(updateShopOrderSql, [shopOrderSid,deliverOrderSid,orderSid]);
+  console.log(orderSid);
+  res.json(orderSid);
 });
+
 //購物車測試頁叫資料
 app.get("/getTempProductList", async (req, res) => {
   const sql = "SELECT * FROM `products` WHERE `shop_sid` = 89";
@@ -314,8 +389,7 @@ app.use("/LoginCheck", require("./Modules/TokonLoginCheckApi"));
 
 //設定根目錄資料夾 通常放在404前面
 app.use(express.static("Public"));
-app.use("/uploads",express.static("uploads"));
-
+app.use("/uploads", express.static("uploads"));
 
 app.use("/images", express.static("Images"));
 
@@ -332,8 +406,8 @@ const server = app.listen(port, () => {
 require(__dirname + "/Modules/WebSocket")(server);
 
 //傳送訂單進度
-const orderServer = orderSocket.listen('3200', () => {
-  console.log("訂單伺服器啟動，埠號:", '3200');
+const orderServer = orderSocket.listen("3200", () => {
+  console.log("訂單伺服器啟動，埠號:", "3200");
 });
 require(__dirname + "/Modules/OrderWebSocket")(orderServer);
 
@@ -342,8 +416,6 @@ require(__dirname + "/Modules/OrderWebSocket")(orderServer);
 //   console.log("外送進度伺服器啟動，埠號:", '3500');
 // });;
 // require(__dirname + "/Modules/DeliverWebSocket")(deliverServer);
-
-
 
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 //404頁面 放最後
