@@ -158,6 +158,9 @@ app.use("/Member/ChatServiceToAdmin", [memberTokenLoginCheck], require("./Module
 
 //店家
 app.use("/Store/ChatServiceToAdmin",[storeTokenLoginCheck], require("./Modules/ServiceSystemForDB"));
+//店家列表
+app.use("/Shopping/", require("./Api/Shopping/Shopping"));
+
 //外送員
 
 app.use("/Deliver/ChatServiceToAdmin", [deliverTokenLoginCheck], require("./Modules/ServiceSystemForDB"));

@@ -24,13 +24,14 @@ router.use("/Member", async (req, res) => {
     "SELECT `sid`, `name`, `email`, `password` FROM `member` WHERE `email` LIKE ? ";
 
   let [[result]] = await DB.query(loginSql, [email]);
-  let passStat = false;
-  result.password === password ? (passStat = true) : null;
   console.log('會員登入'+result);
   if (!result) {
     output.errorType = "帳號或密碼錯誤";
     return res.json(output);
-  } else if (!passStat) {
+  } 
+  let passStat = false;
+  result.password === password ? (passStat = true) : null;
+  if (!passStat) {
     output.errorType = "帳號或密碼錯誤";
     return res.json(output);
   } else {
