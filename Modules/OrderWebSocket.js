@@ -65,6 +65,15 @@ const OrderWebSocket = (server) => {
                     receiveWS.send(JSON.stringify(sendMSG));
                 }
             }
+            else if(MSG.position){
+                //傳送位置資訊
+                //{position:true,lat:deliverPosition.lat,lng:deliverPosition.lng ,receiveSid:memberSid,receiveSide:side,orderSid:orderSid}
+                console.log(MSG);
+                const receiveWS = referenceList[MSG.receiveSide][MSG.receiveSid];
+                if (receiveWS) {
+                    receiveWS.send(JSON.stringify(MSG));
+                }
+            }
             else{
               ws.close();
             }

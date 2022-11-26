@@ -12,6 +12,7 @@ const multer = require("multer");
 const moment = require("moment-timezone");
 //資料庫連線模組
 const DB = require(__dirname + "/modules/ConnectDataBase");
+const db = require(__dirname + "/modules/ConnectDataBase");
 //圖片上傳模組  1012/1050
 const upload = require(__dirname + "/modules/Upload_Imgs");
 //搬移檔案系統
@@ -22,6 +23,7 @@ const { v4: getv4 } = require("uuid");
 const app = express();
 const jwt = require("jsonwebtoken");
 const orderSocket = express();
+const bcrypt = require('bcrypt')
 
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 //跨域來源請求---React
@@ -154,7 +156,19 @@ app.post('/deliverlogin', async(req, res)=>{
           sid,
           name,
           token,
-      }    
+      }
+      //===============================================分隔線================================================
+      const signTokenYu = jwt.sign(
+        {
+          sid: row.sid,
+          email: row.email,
+          name: row.name,
+          side: 3
+        },
+        process.env.JWT_SECRET
+      );
+      output.tokenYU = signTokenYu
+      //===============================================分隔線================================================
   }   
   res.json(output);
 })
@@ -456,6 +470,10 @@ app.use(
   [deliverTokenLoginCheck],
   require("./Modules/ServiceSystemForDB")
 );
+
+//deliving/GetAddress?side=${side}&orderSid=${orderSid}
+app.use('/deliving',deliverTokenLoginCheck,require('./API/Deliver/DelivingDetails'))
+
 
 //管理者
 //優惠券管理(資料)
