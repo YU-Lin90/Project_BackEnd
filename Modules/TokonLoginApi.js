@@ -35,8 +35,6 @@ router.use("/Member", async (req, res) => {
     output.errorType = "帳號或密碼錯誤";
     return res.json(output);
   } 
-  let passStat = false;
-  result.password === password ? (passStat = true) : null;
   if (!passStat) {
     output.errorType = "帳號或密碼錯誤";
     return res.json(output);
