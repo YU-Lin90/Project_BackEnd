@@ -237,6 +237,9 @@ app.use(
   [storeTokenLoginCheck],
   require("./Modules/ServiceSystemForDB")
 );
+//店家列表
+app.use("/Shopping/", require("./Api/Shopping/Shopping"));
+
 //店家訂單(資料)
 app.use(
   "/StoreOrders",
