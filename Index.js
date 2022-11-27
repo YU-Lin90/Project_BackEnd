@@ -303,6 +303,8 @@ app.use(
   memberTokenLoginCheck,
   require("./API/Member/Member_OrderCommand")
 );
+//會員 現在訂單 地圖上資訊 (資料)
+app.use('/MemberMapDetails',memberTokenLoginCheck,require('./API/Member/Member_MapDetails'))
 //===============================================分隔線================================================
 //錚
 //會員紅利點數(資料)
