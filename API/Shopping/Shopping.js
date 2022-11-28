@@ -38,6 +38,7 @@ router.use("/", async (req, res, next) => {
   console.log("價格下限",price_min)
   console.log("等待時間",wait_time)
 
+
   //SQL搜尋後
   //SELECT shop.*  , products.sid AS products_sid , products.name AS products_name , products.price FROM `shop` left Join products on shop.sid = products.shop_sid
 
@@ -117,7 +118,7 @@ router.use("/", async (req, res, next) => {
 
 
     //組成完整的SQL結構語句
-    let sql_search = `SELECT shop.* ${products} FROM ${origin} ${join} ${where}`;
+    let sql_search = `SELECT shop.* ${products} FROM ${origin} ${join} ${where} GROUP BY sid`;
 
     //要資料
     let [result] = await DB.query(sql_search);
