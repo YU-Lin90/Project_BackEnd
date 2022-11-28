@@ -426,7 +426,7 @@ app.get("/randomOrder", async (req, res) => {
   );
 
   const deliverOrderSql =
-    "INSERT INTO `deliver_order`( `member_sid`, `shop_sid`, `deliver_sid`, `store_order_sid`, `order_sid`,  `deliver_take_time`, `complete_time`, `order_finish`, `deliver_fee`) VALUES (1,89,1,?,?,?,?,1,?)";
+    "INSERT INTO `deliver_order`( `member_sid`, `shop_sid`, `deliver_sid`, `store_order_sid`, `order_sid`,  `deliver_take_time`, `complete_time`, `order_finish`, `deliver_fee`,deliver_check_time) VALUES (1,89,1,?,?,?,?,1,?,?)";
 
   const deliver_take_time = new Date(newDay.getTime() + oneHour * 3) ;
   const complete_time = new Date(newDay.getTime() + oneHour * 4) ;
@@ -436,8 +436,9 @@ app.get("/randomOrder", async (req, res) => {
     deliver_take_time,
     complete_time,
     fee,
+    deliver_take_time
   ];
-
+  console.log(deliverOrderDetail);
   const [{ insertId: deliverOrderSid }] = await DB.query(
     deliverOrderSql,
     deliverOrderDetail
@@ -494,6 +495,18 @@ app.use(
   adminTokenLoginCheck,
   require("./Api/Admin/Service/Admin_ServiceRenderApi")
 );
+
+//修正店家資料
+app.get('/setfakedata',async(req,res)=>{
+
+  const sql ="UPDATE `shop` SET `wait_time`= ? WHERE sid= ? "
+  for(let i = 1 ;i<100;i++){
+    // const phone = ('09' + getIntTo0(99999999) +'0123456789').slice(0,10)
+    const eva = getIntTo1(10) * 5
+    await DB.query(sql,[eva,i])    
+  }
+  res.json(1)
+})
 
 //===============================================分隔線================================================
 //Token登入
