@@ -145,7 +145,7 @@ router.post('/add',
         try {
             if (!req.file) {
 
-                const sql = "INSERT INTO `member`(`email`, `password`,`name`,`phone`,`image`) VALUES (?,?,?,?,?)";
+                const sql = "INSERT INTO `member`(`email`, `password`,`name`,`phone`,`image`,`point`) VALUES (?,?,?,?,?,'1000')";
                 const image = null;
                 const [result] = await db.query(sql, [
                     req.body.email,
@@ -368,12 +368,12 @@ router.get('/api2/:sid', async (req, res) => {
 
 router.get('/api3/:sid', async (req, res) => {
     // const {sid} = req.params;g
-    console.log(req.params.sid);
+    // console.log(req.params.sid);
     const sql = "SELECT favorite_shop.*, shop.name,shop.address,shop.phone,shop.src FROM favorite_shop JOIN shop ON favorite_shop.shop_sid = shop.sid WHERE member_sid=?";
     const [result] = await db.query(sql, [
         req.params.sid,
     ]);
-    console.log(result);
+    // console.log(result);
     res.json(result);
 });
 
@@ -406,6 +406,14 @@ router.post('/addshop/:sid/:i', upload.none(), async (req, res) => {
     console.log(req.params.i)
     res.json(result);
 
+});
+
+router.delete('/del2/:sid', async (req, res) => {
+    console.log('body'+ JSON.stringify( req.body))
+    const sql = " DELETE FROM favorite_shop WHERE member_sid=? && shop_sid=?";
+    // console.log(req.body.shop_sid);
+    const [result] = await db.query(sql,[req.params.sid,req.body.shop]);
+    res.json({ success: !!result.affectedRows, result });
 });
 
 
