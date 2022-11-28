@@ -74,6 +74,11 @@ const OrderWebSocket = (server) => {
                     receiveWS.send(JSON.stringify(MSG));
                 }
             }
+            else if (MSG.deliveMsg){
+                // TODO: 這裡要寫入資料庫
+                //{ deliveMsg: '454646', receive_sid: 1, receive_side: 2, orderSid: 1 }
+                console.log(MSG);
+            }
             else{
               ws.close();
             }

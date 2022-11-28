@@ -5,7 +5,20 @@ const moment = require("moment-timezone");
 function changeTime(oldTime, form) {
   return moment(oldTime).tz("Asia/Taipei").format(form);
 }
-
+router.get('/GetDeliverSid',async(req,res)=>{
+  const orderSid = req.query.orderSid
+  const memberSid = req.token.sid
+  const sql = "SELECT `deliver_sid` FROM `orders` WHERE `sid` = ? AND `member_sid` = ?"
+  const [[{deliver_sid}]] = await DB.query(sql,[orderSid,memberSid])
+  res.json(deliver_sid)
+})
+router.get('/GetShopSid',async(req,res)=>{
+  const orderSid = req.query.orderSid
+  const memberSid = req.token.sid
+  const sql = "SELECT `shop_sid` FROM `orders` WHERE `sid` = ? AND `member_sid` = ?"
+  const [[{shop_sid}]] = await DB.query(sql,[orderSid,memberSid])
+  res.json(shop_sid)
+})
 router.get("/GetStoreDetail", async (req, res) => {
   const orderSid = req.query.orderSid;
   if (!orderSid) {
