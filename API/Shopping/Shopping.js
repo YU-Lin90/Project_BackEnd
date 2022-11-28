@@ -33,6 +33,11 @@ router.use("/", async (req, res, next) => {
   //SQL條件字串
   let where = ` WHERE shop.sid <> '101' `;
 
+
+  console.log("價格上限",price_max)
+  console.log("價格下限",price_min)
+  console.log("等待時間",wait_time)
+
   //SQL搜尋後
   //SELECT shop.*  , products.sid AS products_sid , products.name AS products_name , products.price FROM `shop` left Join products on shop.sid = products.shop_sid
 
@@ -46,17 +51,26 @@ router.use("/", async (req, res, next) => {
   if (search || price_max || price_min || wait_time) {
 
     //SQL搜尋放入商品表的SID、商品名、商品價格
-    let products = ` , products.sid AS products_sid , products.name AS products_name , products.price `;
+    let products = ``;
+
     //SQL搜尋加入商品表
-    let join = ` left Join products on shop.sid = products.shop_sid `;
+    let join = ``;
+
+    //若有設定等待時間，則where的頭必須加入
+    if (!search || wait_time ){
+      where += ` AND wait_time <= ${wait_time}`;
+    }
 
     ////如果有文字搜尋，則加在where語句後，同時搜尋店家和商品
     if (search) {
+      //加入餐點的sid、name、price這三行
+      products = ` , products.sid AS products_sid , products.name AS products_name , products.price `;
+      //left join 餐點所屬店家sid=店家的sid、name、price
+      join = ` left Join products on shop.sid = products.shop_sid `;
       //搜尋字段中的第一個
       where += ` AND shop.\`name\` LIKE ${DB.escape("%" + search[0] + "%")}
             OR products.\`name\` LIKE ${DB.escape("%" + search[0] + "%")}
             `;
-
       //多重字段下，第二個以後的字段
       if (search.length > 1) {
         for (let x = 1; x < search.length; x++) {
@@ -66,12 +80,26 @@ router.use("/", async (req, res, next) => {
         `;
         }
       }
+      //若有文字搜索中有設定等待時間，則where尾部必須再加一次
+      if(wait_time > 0){
+        where += ` AND wait_time <= ${wait_time}`;
+      }
     }
-    //若沒有搜尋文字但有其他條件，將搜尋來源變更為僅商品
-    else {
+    //若沒有搜尋文字但有價格條件，將搜尋來源變更為僅商品
+    if(!search && price_max) {
+      //加入餐點的sid、name、price這三行
+      products = ` , products.sid AS products_sid , products.name AS products_name , products.price `;
+      //inner join 餐點所屬店家sid=店家的sid、name、price
+      join = ` inner Join shop on shop.sid = products.shop_sid `;
+      //來源變更為"商品"
+      origin = ` products `;
+    }
+    if(!search && price_min) {
+      products = ` , products.sid AS products_sid , products.name AS products_name , products.price `;
       origin = ` products `;
       join = ` inner Join shop on shop.sid = products.shop_sid `;
     }
+
 
     //價格範圍上限
     if (price_max > 0) {
@@ -86,6 +114,7 @@ router.use("/", async (req, res, next) => {
       }
       join += ` AND price >= ${price_min} `;
     }
+
 
     //組成完整的SQL結構語句
     let sql_search = `SELECT shop.* ${products} FROM ${origin} ${join} ${where}`;
