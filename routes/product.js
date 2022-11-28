@@ -113,10 +113,11 @@ router.put("/:shop_sid", upload.single("avatar"), async (req, res) => {
   // 找到上傳圖片的路徑名稱(檔名)，當作資料表中的src
   const src = req.file ? req.file.filename : "";
   available = available ? 1 : 0;
-  discount = discount.trim() ? Number(discount) : 0;
+  // discount = discount.trim() ? Number(discount) : Number(price);
+  discount = price;
   options_types = options_types ? options_types : [];
   console.log(discount);
-  
+
   try {
     const product_sql =
       "UPDATE `products` SET `name`=?,`price`=?,`products_type_sid`=?,`src`=?,`note`=?,`available`=?,`discount`=? WHERE sid=?";
