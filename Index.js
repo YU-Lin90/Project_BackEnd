@@ -340,6 +340,7 @@ app.use("/store-admin/overview", require("./routes/overview"));
 app.use("/store-admin/type", require("./routes/type"));
 app.use("/store-admin/product", require("./routes/product"));
 app.use("/store-admin/option", require("./routes/option"));
+app.use("/store", require("./routes/productList"))
 //客服
 app.use(
   "/Store/ChatServiceToAdmin",

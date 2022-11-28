@@ -11,6 +11,7 @@ router.get("/", async (req, res) => {
     options: {},
   };
   const { shop_sid } = req.query;
+  console.log(shop_sid)
 
   const shop_sql = "SELECT * FROM `shop` WHERE sid=?";
   const [[shop_rows]] = await db.query(shop_sql, [shop_sid]);
