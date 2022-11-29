@@ -189,15 +189,15 @@ app.get('/deliverorder/:id', async(req, res)=>{
 /* ----------接單後訂單取餐鈕----------- */
 app.put('/deliverorder/:id', async(req, res)=>{
   const sql1 = "UPDATE deliver_order SET `deliver_take_time`=NOW() WHERE order_sid=?";
-  const [result1] = await db.query(sql1, [
-      req.params.id
-  ]);
+  await db.query(sql1, [req.params.id]);
   const sql2 = "UPDATE shop_order SET `deliver_take`=1 WHERE order_sid=?";
-  const [result2] = await db.query(sql2, [
-      req.params.id
-  ]);
-  // res.json(result1,result2);
-  // res.json(result2)
+  await db.query(sql2, [req.params.id]);
+})
+/* ---------------------------------- */
+/* -----------接單後訂單完成鈕---------- */
+app.put('/finishdeliverorder/:id', async(req, res)=>{
+  const sql1 = "UPDATE deliver_order SET `complete_time`=NOW(), `order_finish`=1 WHERE order_sid=?";
+  await db.query(sql1, [req.params.id]);
 })
 /* ---------------------------------- */
 /* --------------過往紀錄------------- */
