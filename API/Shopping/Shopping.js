@@ -27,12 +27,16 @@ router.use("/", async (req, res, next) => {
   //是否有配送時間
   let wait_time = req.query.wait_time ? Number(req.query.wait_time.trim()) : 0;
 
+
+
   //預設搜尋來源為店家
   let origin = ` shop `;
 
   //SQL條件字串
   let where = ` WHERE shop.sid <> '101' `;
 
+ //SQL資料排序方式(預設是按照評分)
+  let order = ` ORDER BY average_evaluation DESC `;
 
   console.log("價格上限",price_max)
   console.log("價格下限",price_min)
@@ -62,6 +66,7 @@ router.use("/", async (req, res, next) => {
 
     //SQL搜尋加入商品表
     let join = ``;
+
 
     //若有設定等待時間，則where的頭必須加入
     if (!search || wait_time ){
@@ -124,7 +129,7 @@ router.use("/", async (req, res, next) => {
 
 
     //組成完整的SQL結構語句
-    let sql_search = `SELECT shop.* , COUNT(*) AS products_count , COUNT(*) OVER() AS total_rows  ${products} FROM ${origin} ${join} ${where} GROUP BY sid`;
+    let sql_search = `SELECT shop.* , COUNT(*) AS products_count , COUNT(*) OVER() AS total_rows  ${products} FROM ${origin} ${join} ${where} GROUP BY sid ${order}`;
 
 
     //要資料
@@ -137,7 +142,7 @@ router.use("/", async (req, res, next) => {
     console.log("SQL語法", sql_search);
   } else {
     //若無搜尋則顯示所有商家
-    sql_search = ` SELECT * from shop ${where}`;
+    sql_search = ` SELECT * from shop ${where} ${order}`;
 
     //要資料
     let [result] = await DB.query(sql_search);
