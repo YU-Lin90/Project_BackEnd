@@ -331,6 +331,10 @@ app.use(
   [memberTokenLoginCheck],
   require("./Modules/ServiceSystemForDB")
 );
+//訂單中對話 會員+外送員
+app.use('/OrderChat/Member',memberTokenLoginCheck,require('./API/Shopping/OrderChat'))
+app.use('/OrderChat/Deliver',deliverTokenLoginCheck,require('./API/Shopping/OrderChat'))
+
 //===============================================分隔線================================================
 //店家
 app.get("/store-list", async (req, res) => {
