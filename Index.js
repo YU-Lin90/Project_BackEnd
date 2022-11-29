@@ -305,6 +305,9 @@ app.use(
 );
 //會員 現在訂單 地圖上資訊 (資料)
 app.use('/MemberMapDetails',memberTokenLoginCheck,require('./API/Member/Member_MapDetails'))
+
+//會員 每日優惠券(動作)
+app.use('/DailyCoupon',memberTokenLoginCheck,require('./API/Member/Member_DailyCoupon'))
 //===============================================分隔線================================================
 //錚
 //會員紅利點數(資料)
@@ -322,7 +325,7 @@ app.use(
 app.use("/MemberCouponGetApi", require("./API/Member/Member_CouponGetApi"));
 //===============================================分隔線================================================
 
-//客服
+//會員客服
 app.use(
   "/Member/ChatServiceToAdmin",
   [memberTokenLoginCheck],
@@ -496,17 +499,8 @@ app.use(
   require("./Api/Admin/Service/Admin_ServiceRenderApi")
 );
 
-//修正店家資料
-app.get('/setfakedata',async(req,res)=>{
-
-  const sql ="UPDATE `shop` SET `wait_time`= ? WHERE sid= ? "
-  for(let i = 1 ;i<100;i++){
-    // const phone = ('09' + getIntTo0(99999999) +'0123456789').slice(0,10)
-    const eva = getIntTo1(10) * 5
-    await DB.query(sql,[eva,i])    
-  }
-  res.json(1)
-})
+//獲得假資料
+app.use('/Setfakedata',require('./Modules/GetFakeData'))
 
 //===============================================分隔線================================================
 //Token登入
