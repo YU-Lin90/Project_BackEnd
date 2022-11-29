@@ -124,7 +124,7 @@ const deliverTokenLoginCheck = async (req, res, next) => {
 /* ----------------外送員接單------------------ */
 
 async function getListData(req, res){
-  const sql1 = "SELECT shop_order.sid, shop_order.member_sid, shop_order.order_sid, shop_order.shop_sid, shop.name, shop.address FROM shop RIGHT JOIN shop_order on shop.sid = shop_order.shop_sid ";
+  const sql1 = "SELECT shop_order.sid, shop_order.member_sid, shop_order.order_sid, shop_order.shop_sid, shop.name, shop.address, orders.deliver_memo, orders.deliver_fee FROM (shop_order INNER JOIN shop ON shop.sid = shop_order.shop_sid)INNER JOIN orders ON shop_order.order_sid = orders.sid WHERE shop_order.deliver_sid IS NULL";
   [rows1] = await db.query(sql1);
   return {rows1};
 }
