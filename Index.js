@@ -198,6 +198,8 @@ app.put('/deliverorder/:id', async(req, res)=>{
 app.put('/finishdeliverorder/:id', async(req, res)=>{
   const sql1 = "UPDATE deliver_order SET `complete_time`=NOW(), `order_finish`=1 WHERE order_sid=?";
   await db.query(sql1, [req.params.id]);
+  const sql2 = "UPDATE shop_order SET shop_order.deliver_order_sid = (SELECT deliver_order.sid FROM deliver_order WHERE shop_order.order_sid = deliver_order.order_sid)";
+  await db.query(sql2);
 })
 /* ---------------------------------- */
 /* --------------過往紀錄------------- */
