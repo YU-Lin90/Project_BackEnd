@@ -25,6 +25,30 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   const fullSql = sqlBefore + sqlSpilit +sqlAfter
   // console.log('完整SQL:'+fullSql);
   const [[result]] = await DB.query(fullSql)
+  const YY = new Date().getFullYear()
+  const MM = new Date().getMonth() + 1 
+  const DD = new Date().getDate()
+  const dateString = YY + '-' + MM + '-' + DD
+  const checkSql = 'SELECT * FROM `daily_coupon` WHERE `member_sid` = ? AND `get_date` = ?'
+  //這個會拿到次數 或是NULL
+  const a  = 'SELECT MAX(`count`)  FROM `daily_coupon` WHERE `member_sid` = ? AND `get_date` = ?'
+  /*{
+    "sid": 744,
+    "name": "好吃壽司",
+    "email": "S0965600842",
+    "password": "S0965600842PS",
+    "address": "台北市環河南路29號",
+    "phone": "0965600842",
+    "food_type_sid": 2,
+    "bus_start": "830",
+    "bus_end": "1730",
+    "rest_right": 1,
+    "src": "storeCover96",
+    "wait_time": 30,
+    "average_evaluation": 2.3
+} */
+  const gettedShopSid = result.sid
+  
   res.json(result)
 })
 
