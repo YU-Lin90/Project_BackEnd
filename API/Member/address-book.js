@@ -131,17 +131,6 @@ router.post('/add',
     // upload.single('avatar'),
     async (req, res) => {
         console.log(req.body);
-        const extMap = {
-            'image/jpeg': '.jpg',
-            'image/png': '.png',
-            'image/gif': '.gif',
-        };
-
-        const output = {
-            code: 0,
-            error: {},
-            postData: req.body, // 除錯用
-        };
         try {
             if (!req.file) {
 
@@ -156,7 +145,6 @@ router.post('/add',
                 );
                 res.send({
                     code: 0,
-                    error: {},
                     postData: req.body, // 除錯用
                     status: true,
                     message: 'No file uploaded'
@@ -175,7 +163,7 @@ router.post('/add',
                 */
 
 
-                const sql = "INSERT INTO `member`(`email`, `password`,`name`,`phone`,`image`) VALUES (?,?,?,?,?)";
+                const sql = "INSERT INTO `member`(`email`, `password`,`name`,`phone`,`image`,`point`) VALUES (?,?,?,?,?,'1000')";
                 const image = avatar.filename;
                 console.log(image);
                 const [result] = await db.query(sql, [
@@ -191,8 +179,6 @@ router.post('/add',
                 //送出回應
                 res.json({
                     code: 0,
-                    error: {},
-                    message: {},
                     postData: req.body, // 除錯用
                     status: true,
                     message: 'File is uploaded',
