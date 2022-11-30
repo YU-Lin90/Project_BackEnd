@@ -168,11 +168,22 @@ app.get('/api', async (req, res)=>{
 /* ----------------------------- */
 /* ----------外送員訂單確認------------ */
 app.post('/sendOrder', async (req, res)=>{
-  const sqlenter = "INSERT INTO `deliver_order`(`deliver_order_sid`, `member_sid`, `shop_sid`, `deliver_sid`, `store_order_sid`, `order_sid`, `order_finish`, `deliver_fee`, `deliver_memo`, `deliver_check_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-  const [result1] = await db.query(sqlenter, [req.body.deliver_order_sid, req.body.member_sid, req.body.shop_sid, req.body.deliver_sid, req.body.store_order_sid, req.body.order_sid, req.body.order_finish, req.body.deliver_fee, req.body.deliver_memo]);
-  const sqlshop = "UPDATE shop_order SET deliver_sid=?, deliver_order_sid=? WHERE order_sid=?"
-  await db.query(sqlshop, [req.body.deliver_sid, req.body.deliver_order_sid, req.body.order_sid]);
-  res.json(result1);
+  const sqlenter = "INSERT INTO `deliver_order`(`member_sid`, `shop_sid`, `deliver_sid`, `store_order_sid`, `order_sid`, `deliver_memo`, `order_finish`, `deliver_fee`,  `deliver_check_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+  await db.query(sqlenter, 
+      [
+          req.body.member_sid, 
+          req.body.shop_sid, 
+          req.body.deliver_sid, 
+          req.body.sid, 
+          req.body.order_sid, 
+          req.body.deliver_memo, 
+          req.body.order_finish, 
+          req.body.deliver_fee
+      ]);
+  const sqlshop = "UPDATE shop_order SET deliver_sid=? WHERE order_sid=?"
+  await db.query(sqlshop, [req.body.deliver_sid, req.body.order_sid]);
+  const sql2 = "UPDATE shop_order SET shop_order.deliver_order_sid = (SELECT deliver_order.sid FROM deliver_order WHERE shop_order.order_sid = deliver_order.order_sid)";
+  await db.query(sql2);
 })
 /* --------------------------------- */
 /* ----------接單後訂單預覽------------- */
@@ -198,8 +209,6 @@ app.put('/deliverorder/:id', async(req, res)=>{
 app.put('/finishdeliverorder/:id', async(req, res)=>{
   const sql1 = "UPDATE deliver_order SET `complete_time`=NOW(), `order_finish`=1 WHERE order_sid=?";
   await db.query(sql1, [req.params.id]);
-  const sql2 = "UPDATE shop_order SET shop_order.deliver_order_sid = (SELECT deliver_order.sid FROM deliver_order WHERE shop_order.order_sid = deliver_order.order_sid)";
-  await db.query(sql2);
 })
 /* ---------------------------------- */
 /* --------------過往紀錄------------- */
