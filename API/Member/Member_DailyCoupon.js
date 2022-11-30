@@ -19,12 +19,12 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
 
   // sqlSpilit = '(' + sqlSpilit +')'
   //[1,5]
-  const sqlBefore = "SELECT `sid`, `name`, `email`, `password`, `address`, `phone`, `food_type_sid`, `bus_start`, `bus_end`, `rest_right`, `src`, `wait_time`, `average_evaluation` FROM `shop` WHERE    "
+  const sqlBefore = "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE    "
   //LIMIT 1
-  const sqlAfter =  " `sid` !=101  ORDER BY RAND() LIMIT 1   "
+  const sqlAfter =  " `sid` !=101  ORDER BY RAND() LIMIT 30  "
   const fullSql = sqlBefore + sqlSpilit +sqlAfter
   // console.log('完整SQL:'+fullSql);
-  const [[result]] = await DB.query(fullSql)
+  const [result] = await DB.query(fullSql)
   const YY = new Date().getFullYear()
   const MM = new Date().getMonth() + 1 
   const DD = new Date().getDate()
@@ -51,7 +51,6 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   
   res.json(result)
 })
-
 
 /*1	美式
 2	日式
