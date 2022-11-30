@@ -184,6 +184,9 @@ app.post('/sendOrder', async (req, res)=>{
   await db.query(sqlshop, [req.body.deliver_sid, req.body.order_sid]);
   const sql2 = "UPDATE shop_order SET shop_order.deliver_order_sid = (SELECT deliver_order.sid FROM deliver_order WHERE shop_order.order_sid = deliver_order.order_sid)";
   await db.query(sql2);
+  const sql3 = "SELECT * FROM shop_order WHERE order_sid = ?"  
+  const [add] = await db.query(sql3, [req.body.order_sid]);
+  res.json(add);
 })
 /* --------------------------------- */
 /* ----------接單後訂單預覽------------- */
