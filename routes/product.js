@@ -21,7 +21,6 @@ router.get("/:shop_sid", async (req, res) => {
   // const [product_rows] = await db.query(product_sql, [89]);
   console.log(product_rows);
 
-
   // 從資料庫取得選項類別的資料，帶有product_sid
   const option_type_sql =
     "SELECT ot.*, otpr.product_sid FROM `options_types` ot LEFT JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid JOIN `products` p ON otpr.product_sid=p.sid WHERE p.shop_sid=?";
@@ -65,6 +64,7 @@ router.post("/:shop_sid", upload.single("avatar"), async (req, res) => {
   const src = req.file ? req.file.filename : "";
   available = available ? 1 : 0;
   discount = discount.trim() ? Number(discount) : 0;
+  options_types = options_types ? options_types : [];
 
   // 把這個商品的基本資料填入
   const product_sql =
@@ -116,6 +116,7 @@ router.put("/:shop_sid", upload.single("avatar"), async (req, res) => {
   discount = discount.trim() ? Number(discount) : 0;
   options_types = options_types ? options_types : [];
   console.log(discount);
+  
   try {
     const product_sql =
       "UPDATE `products` SET `name`=?,`price`=?,`products_type_sid`=?,`src`=?,`note`=?,`available`=?,`discount`=? WHERE sid=?";
