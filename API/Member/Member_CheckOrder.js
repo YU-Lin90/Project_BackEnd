@@ -9,7 +9,7 @@ function changeTime(oldTime, form) {
 router.get("/GetSelectDetails", async (req, res) => {
   const memberSid = req.token.sid;
   const sql =
-    "SELECT o. `sid`, o.`shop_sid` , s.`name` FROM `orders` o LEFT JOIN `shop` s  ON s.`sid` = o. `shop_sid` WHERE `order_complete` = 0 AND `member_sid` = ? ORDER BY `order_time` DESC ";
+    "SELECT o. `sid`,o.`order_time`, o.`shop_sid` , s.`name` FROM `orders` o LEFT JOIN `shop` s  ON s.`sid` = o. `shop_sid` WHERE `order_complete` = 0 AND `member_sid` = ? ORDER BY `order_time` DESC ";
   const [result] = await DB.query(sql, memberSid);
 
   for (let element of result) {
