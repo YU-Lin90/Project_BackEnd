@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const DB = require("../Modules/ConnectDataBase");
 const jwt = require("jsonwebtoken");
-const bcrypt = require('bcryptjs');
 //===============================================分隔線================================================
 //會員
 router.use("/Member", async (req, res) => {
@@ -30,7 +29,7 @@ router.use("/Member", async (req, res) => {
     return res.json(output);
   }
   let passStat = false;
-  await bcrypt.compare(password, result.password) ? (passStat = true) : null;
+  result.password === password ? (passStat = true) : null;
   console.log('會員登入' + result);
   if (!result) {
     output.errorType = "帳號或密碼錯誤";

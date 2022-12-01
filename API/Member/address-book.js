@@ -13,7 +13,6 @@ const cors = require('cors');
 const multer = require("multer");
 const fs = require("fs").promises;
 const { body, validationResult } = require("express-validator");
-const bcrypt = require('bcryptjs');
 
 
 
@@ -132,7 +131,6 @@ router.post('/add',
     // upload.single('avatar'),
     async (req, res) => {
         console.log(req.body);
-        const p = await bcrypt.hash(req.body.password,10);
         try {
             if (!req.file) {
 
@@ -140,7 +138,7 @@ router.post('/add',
                 const image = null;
                 const [result] = await db.query(sql, [
                     req.body.email,
-                    p,
+                    req.body.password,
                     req.body.name,
                     req.body.phone,
                     { image },]
@@ -170,7 +168,7 @@ router.post('/add',
                 console.log(image);
                 const [result] = await db.query(sql, [
                     req.body.email,
-                    p,
+                    req.body.password,
                     req.body.name,
                     req.body.phone,
                     req.file.filename,
