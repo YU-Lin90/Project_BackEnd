@@ -29,6 +29,7 @@ router.get("/GetStoreDetail", async (req, res) => {
   const sql =
     "SELECT o.`sid` orderSid, s.`name` shopName , s.`address` FROM `orders` o LEFT JOIN `shop` s ON o.`shop_sid` = s.`sid` WHERE o.`member_sid` = ? AND o.`sid` = ?";
   const [[result]] = await DB.query(sql, [memberSid, orderSid]);
+  const detailSql = "SELECT `sid`, `name`, `price`, `options_type_sid`, `option_order` FROM `options` WHERE 1"
   // console.log(result);
   res.json(result);
 });

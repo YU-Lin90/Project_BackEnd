@@ -45,14 +45,42 @@ router.use("/", async (req, res) => {
   const sql = "INSERT INTO `orders`(`member_sid`, `shop_sid`, `shop_memo`, `deliver_memo`, `order_time`, `order_total`, `coupon_sid`, `sale`, `paid`, `pay_method`, `daily_coupon_sid`, `deliver_fee`, `cook_time`, `total_amount`, `receive_name`, `receive_phone`, `receive_address`) VALUES (?,?,?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?,?)"
   const  [{insertId}] = await DB.query(sql,valueArray) 
   console.log(insertId);
-  /* list :'11': {
-    amount: 1,
-    name: '十一號產品',
-    price: 40,
-    cuttedPrice: 40,
-    imageUrl: '',
-    details: {}
-  }*/
+  /* list :{
+    "amount": 1,
+    "name": "蘑菇培根麵",
+    "price": 120,
+    "cuttedPrice": 120,
+    "imageUrl": "",
+    "details": [
+        {
+            "name": "加料",
+            "sid": 1,
+            "list": [
+                {
+                    "sid": 2,
+                    "name": "珍珠",
+                    "price": 15
+                },
+                {
+                    "sid": 3,
+                    "name": "耶果",
+                    "price": 10
+                }
+            ]
+        },
+        {
+            "name": "溫度",
+            "sid": 2,
+            "list": [
+                {
+                    "sid": 4,
+                    "name": "去冰",
+                    "price": 15
+                }
+            ]
+        }
+    ]
+}*/
   //===============================================分隔線================================================
   const orderSid = insertId
   for(let sid in productDatas){
