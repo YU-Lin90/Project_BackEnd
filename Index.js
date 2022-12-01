@@ -247,6 +247,9 @@ app.use(
 );
 //會員 現在訂單 地圖上資訊 (資料)
 app.use('/MemberMapDetails',memberTokenLoginCheck,require('./API/Member/Member_MapDetails'))
+
+//會員 每日優惠券(動作)
+app.use('/DailyCoupon',memberTokenLoginCheck,require('./API/Member/Member_DailyCoupon'))
 //===============================================分隔線================================================
 //錚
 //會員紅利點數(資料)
@@ -264,12 +267,16 @@ app.use(
 app.use("/MemberCouponGetApi", require("./API/Member/Member_CouponGetApi"));
 //===============================================分隔線================================================
 
-//客服
+//會員客服
 app.use(
   "/Member/ChatServiceToAdmin",
   [memberTokenLoginCheck],
   require("./Modules/ServiceSystemForDB")
 );
+//訂單中對話 會員+外送員
+app.use('/OrderChat/Member',memberTokenLoginCheck,require('./API/Shopping/OrderChat'))
+app.use('/OrderChat/Deliver',deliverTokenLoginCheck,require('./API/Shopping/OrderChat'))
+
 //===============================================分隔線================================================
 //店家
 app.get("/store-list", async (req, res) => {
@@ -282,6 +289,7 @@ app.use("/store-admin/overview", require("./routes/overview"));
 app.use("/store-admin/type", require("./routes/type"));
 app.use("/store-admin/product", require("./routes/product"));
 app.use("/store-admin/option", require("./routes/option"));
+app.use("/store", require("./routes/productList"))
 //客服
 app.use(
   "/Store/ChatServiceToAdmin",
@@ -318,85 +326,7 @@ function getIntTo1(x) {
   return Math.floor(Math.random() * x + 1);
 }
 
-//隨機生成已完成訂單用
-app.get("/randomOrder", async (req, res) => {
-  const oneHour = 3600 * 1000;
-  const hourPerWeek = 24 * 7;
-  const newOrderDate = getIntRange(5, hourPerWeek) * oneHour;
-  const newDay = new Date(new Date() - newOrderDate) ;
 
-  //1107  總數
-  const product1Amount = getIntTo1(5);
-  //1108 總數
-  const product2Amount = getIntTo1(6);
-
-  const order_total = product1Amount * 120 + product2Amount * 155;
-  const sale = order_total;
-  const fee = getIntTo1(6) * 5;
-  const total_amount = product1Amount + product2Amount;
-  //1107 120
-  //1108 155
-
-  // return res.json(newDay);
-
-  const orderSql =
-    "INSERT INTO `orders`(`member_sid`, `shop_sid`, `deliver_sid`,`order_time`, `order_total`, `sale`, `paid`, `pay_method`, `deliver_fee`, `shop_order_status`, `deliver_order_status`, `total_amount`, `receive_name`, `receive_phone`, `receive_address`, `order_complete`) VALUES (1,89,1,?,?,?,1,0,?,1,1,?,'ゆう','0912345678','你家',1)";
-
-  const orderDetail = [newDay, order_total, sale, fee, total_amount];
-
-  const [{ insertId: orderSid }] = await DB.query(orderSql, orderDetail);
-
-  const detailSql =
-    "INSERT INTO `order_detail`( `order_sid`, `product_sid`, `product_price`, `amount`) VALUES (?,?,?,?)";
-
-  const productDetail1 = [orderSid, 1107, 120, product1Amount];
-
-  const productDetail2 = [orderSid, 1108, 155, product2Amount];
-
-  await DB.query(detailSql, productDetail1);
-  await DB.query(detailSql, productDetail2);
-
-  const shopOrderSql =
-    "INSERT INTO `shop_order`(`member_sid`, `deliver_sid`, `order_sid`, `shop_accept_time`, `shop_complete_time`, `deliver_take`, `shop_sid`, `cook_finish`) VALUES (1,1,?,?,?,1,89,1)";
-  const shop_accept_time =new Date(newDay.getTime() + oneHour)  ;
-  const shop_complete_time = new Date(newDay.getTime() + oneHour * 2) ;
-  const shopOrderDetail = [orderSid, shop_accept_time, shop_complete_time];
-
-  const [{ insertId: shopOrderSid }] = await DB.query(
-    shopOrderSql,
-    shopOrderDetail
-  );
-
-  const deliverOrderSql =
-    "INSERT INTO `deliver_order`( `member_sid`, `shop_sid`, `deliver_sid`, `store_order_sid`, `order_sid`,  `deliver_take_time`, `complete_time`, `order_finish`, `deliver_fee`) VALUES (1,89,1,?,?,?,?,1,?)";
-
-  const deliver_take_time = new Date(newDay.getTime() + oneHour * 3) ;
-  const complete_time = new Date(newDay.getTime() + oneHour * 4) ;
-  const deliverOrderDetail = [
-    shopOrderSid,
-    orderSid,
-    deliver_take_time,
-    complete_time,
-    fee,
-  ];
-
-  const [{ insertId: deliverOrderSid }] = await DB.query(
-    deliverOrderSql,
-    deliverOrderDetail
-  );
-
-  const updateShopOrderSql =
-    " UPDATE `shop_order` SET `deliver_order_sid`=? WHERE `order_sid` = ?";
-
-  await DB.query(updateShopOrderSql, [deliverOrderSid, orderSid]);
-
-  const updateOrderSql =
-    "UPDATE `orders` SET `store_order_sid`= ?,`deliver_order_sid`=? WHERE `sid` = ?";
-
-  await DB.query(updateShopOrderSql, [shopOrderSid,deliverOrderSid,orderSid]);
-  console.log(orderSid);
-  res.json(orderSid);
-});
 
 //購物車測試頁叫資料
 app.get("/getTempProductList", async (req, res) => {
@@ -436,6 +366,9 @@ app.use(
   adminTokenLoginCheck,
   require("./Api/Admin/Service/Admin_ServiceRenderApi")
 );
+
+//獲得假資料
+app.use('/Setfakedata',require('./Modules/GetFakeData'))
 
 //===============================================分隔線================================================
 //Token登入

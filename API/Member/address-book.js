@@ -131,21 +131,10 @@ router.post('/add',
     // upload.single('avatar'),
     async (req, res) => {
         console.log(req.body);
-        const extMap = {
-            'image/jpeg': '.jpg',
-            'image/png': '.png',
-            'image/gif': '.gif',
-        };
-
-        const output = {
-            code: 0,
-            error: {},
-            postData: req.body, // 除錯用
-        };
         try {
             if (!req.file) {
 
-                const sql = "INSERT INTO `member`(`email`, `password`,`name`,`phone`,`image`) VALUES (?,?,?,?,?)";
+                const sql = "INSERT INTO `member`(`email`, `password`,`name`,`phone`,`image`,`point`) VALUES (?,?,?,?,?,'1000')";
                 const image = null;
                 const [result] = await db.query(sql, [
                     req.body.email,
@@ -156,7 +145,6 @@ router.post('/add',
                 );
                 res.send({
                     code: 0,
-                    error: {},
                     postData: req.body, // 除錯用
                     status: true,
                     message: 'No file uploaded'
@@ -175,7 +163,7 @@ router.post('/add',
                 */
 
 
-                const sql = "INSERT INTO `member`(`email`, `password`,`name`,`phone`,`image`) VALUES (?,?,?,?,?)";
+                const sql = "INSERT INTO `member`(`email`, `password`,`name`,`phone`,`image`,`point`) VALUES (?,?,?,?,?,'1000')";
                 const image = avatar.filename;
                 console.log(image);
                 const [result] = await db.query(sql, [
@@ -191,8 +179,6 @@ router.post('/add',
                 //送出回應
                 res.json({
                     code: 0,
-                    error: {},
-                    message: {},
                     postData: req.body, // 除錯用
                     status: true,
                     message: 'File is uploaded',
@@ -368,12 +354,12 @@ router.get('/api2/:sid', async (req, res) => {
 
 router.get('/api3/:sid', async (req, res) => {
     // const {sid} = req.params;g
-    console.log(req.params.sid);
+    // console.log(req.params.sid);
     const sql = "SELECT favorite_shop.*, shop.name,shop.address,shop.phone,shop.src FROM favorite_shop JOIN shop ON favorite_shop.shop_sid = shop.sid WHERE member_sid=?";
     const [result] = await db.query(sql, [
         req.params.sid,
     ]);
-    console.log(result);
+    // console.log(result);
     res.json(result);
 });
 
@@ -406,6 +392,14 @@ router.post('/addshop/:sid/:i', upload.none(), async (req, res) => {
     console.log(req.params.i)
     res.json(result);
 
+});
+
+router.delete('/del2/:sid', async (req, res) => {
+    console.log('body'+ JSON.stringify( req.body))
+    const sql = " DELETE FROM favorite_shop WHERE member_sid=? && shop_sid=?";
+    // console.log(req.body.shop_sid);
+    const [result] = await db.query(sql,[req.params.sid,req.body.shop]);
+    res.json({ success: !!result.affectedRows, result });
 });
 
 
