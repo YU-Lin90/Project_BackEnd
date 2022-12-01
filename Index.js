@@ -389,6 +389,7 @@ const port = process.env.SERVER_PORT || 3001;
 //設定監聽port
 const server = app.listen(port, () => {
   console.log("路由伺服器啟動，埠號:", port);
+  console.log("現在時間:" + new Date());
 });
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 
