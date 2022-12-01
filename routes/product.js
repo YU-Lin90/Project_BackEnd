@@ -119,18 +119,34 @@ router.put("/:shop_sid", upload.single("avatar"), async (req, res) => {
   console.log(discount);
 
   try {
-    const product_sql =
-      "UPDATE `products` SET `name`=?,`price`=?,`products_type_sid`=?,`src`=?,`note`=?,`available`=?,`discount`=? WHERE sid=?";
-    const [result] = await db.query(product_sql, [
-      name,
-      price,
-      type,
-      src,
-      note,
-      available,
-      discount,
-      sid,
-    ]);
+    // 如果有上傳新的圖片，就取代原有的src
+    if (src && src !== "") {
+      const product_sql =
+        "UPDATE `products` SET `name`=?,`price`=?,`products_type_sid`=?,`src`=?,`note`=?,`available`=?,`discount`=? WHERE sid=?";
+      const [result] = await db.query(product_sql, [
+        name,
+        price,
+        type,
+        src,
+        note,
+        available,
+        discount,
+        sid,
+      ]);
+    } else {
+      // 如果沒有上傳新的圖片，就不更改原有的src。
+      const product_sql =
+        "UPDATE `products` SET `name`=?,`price`=?,`products_type_sid`=?,`note`=?,`available`=?,`discount`=? WHERE sid=?";
+      const [result] = await db.query(product_sql, [
+        name,
+        price,
+        type,
+        note,
+        available,
+        discount,
+        sid,
+      ]);
+    }
 
     // 先刪除這個商品跟所有option_type的關係
     const delete_relation_sql =
