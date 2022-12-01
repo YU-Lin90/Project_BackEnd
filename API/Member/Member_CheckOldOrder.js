@@ -43,6 +43,16 @@ router.get("/GetDropDetails", async (req, res) => {
   // const memberSid = req.token.sid
   const sql = "SELECT od.`order_sid`, od.`product_sid`, od.`product_price`, od.`amount`,p.`name` FROM `order_detail` od LEFT JOIN `products` p ON p.`sid` = od.`product_sid` WHERE od.`order_sid` = ?"
   const [result] =  await DB.query(sql,orderSid)
+
+  //===============================================分隔線================================================
+   //選項細節  放進商品清單裡面
+  for(let element of result){
+    const productSid = element.product_sid
+    const optionSql = "SELECT `option_detail_sid`, `options`, `option_price` FROM `order_option` WHERE `order_sid`=? AND `product_sid` = ? "
+    const [options] = await DB.query(optionSql,[orderSid,productSid])
+    element.options = options
+  } 
+
   res.json(result)
 })
 

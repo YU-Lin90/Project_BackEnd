@@ -51,6 +51,7 @@ router.put('/deliverorder/:id', async(req, res)=>{
     await db.query(sql1, [req.params.id]);
     const sql2 = "UPDATE shop_order SET `deliver_take`=1 WHERE order_sid=?";
     await db.query(sql2, [req.params.id]);
+    console.log('取餐');
 })
 /* ---------------------------------- */
 /* -----------接單後訂單完成鈕---------- */

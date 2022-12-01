@@ -3,15 +3,20 @@ const router = express.Router();
 const DB = require("../../Modules/ConnectDataBase");
 const moment = require("moment-timezone");
 
+const cutamounts = [30, 20, 10]
+
 router.post("/GetRandomStoreWithType", async (req, res) => {
+  const output = {}
   //篩選完成 傳進來的是不要的
   const rejectTypes = req.body
+  const memberSid = req.token.sid
   let sqlSpilit = ''
-  for(let element of rejectTypes){
+  //串接字串
+  for (let element of rejectTypes) {
     const num = Number(element)
     // console.log(num);
-    if(num){
-      sqlSpilit+=` food_type_sid != ${num}  AND  `
+    if (num) {
+      sqlSpilit += ` food_type_sid != ${num}  AND  `
       // sqlSpilit.push(` food_type_sid != ${num}  AND  `)
     }
   }
@@ -21,17 +26,16 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   //[1,5]
   const sqlBefore = "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE    "
   //LIMIT 1
-  const sqlAfter =  " `sid` !=101  ORDER BY RAND() LIMIT 30  "
-  const fullSql = sqlBefore + sqlSpilit +sqlAfter
+  const sqlAfter = " `sid` !=101  ORDER BY RAND() LIMIT 29  "
+  const fullSql = sqlBefore + sqlSpilit + sqlAfter
   // console.log('完整SQL:'+fullSql);
   const [result] = await DB.query(fullSql)
+
   const YY = new Date().getFullYear()
-  const MM = new Date().getMonth() + 1 
+  const MM = new Date().getMonth() + 1
   const DD = new Date().getDate()
   const dateString = YY + '-' + MM + '-' + DD
-  const checkSql = 'SELECT * FROM `daily_coupon` WHERE `member_sid` = ? AND `get_date` = ?'
-  //這個會拿到次數 或是NULL
-  const a  = 'SELECT MAX(`count`)  FROM `daily_coupon` WHERE `member_sid` = ? AND `get_date` = ?'
+  // const checkSql = 'SELECT * FROM `daily_coupon` WHERE `member_sid` = ? AND `get_date` = ?'
   /*{
     "sid": 744,
     "name": "好吃壽司",
@@ -47,10 +51,44 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
     "wait_time": 30,
     "average_evaluation": 2.3
 } */
-  const gettedShopSid = result.sid
   
-  res.json(result)
+  //展示用 獲得固定店家資料
+  //===============================================分隔線================================================
+  //        要的店家SID
+  const presentationSid = 89
+  const forShowSql = "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE `sid` = ?"
+  const [[showShopData]] = await DB.query(forShowSql,presentationSid)
+  console.log(showShopData);
+  result.unshift(showShopData)
+  //===============================================分隔線================================================
+  const gettedShopSid = result[0].sid
+
+  output.shopList = result
+  // console.log(gettedShopSid);
+  // return res.json(output)
+  //這個會拿到次數 或是NULL
+  const todayTimesSql = 'SELECT MAX(`count`) todayCounts  FROM `daily_coupon` WHERE `member_sid` = ? AND `get_date` = ?'
+  let [[{ todayCounts }]] = await DB.query(todayTimesSql, [memberSid, dateString])
+  console.log(todayCounts);//直接就是數字 今天的次數
+  //3次就超過了
+  if (todayCounts===3) {
+    output.over = true
+    // console.log('over3');
+  }
+  else {
+    //如果三次以下就寫入
+    const insertDailySql = "INSERT INTO `daily_coupon`(`member_sid`, `shop_sid`, `expire`, `cut_amount`, `get_date`, `count`) VALUES (?,?,DATE_ADD(NOW(),INTERVAL 2 HOUR),?,NOW(),?) "
+    //old
+    const injectDatas = [memberSid, gettedShopSid, cutamounts[todayCounts], (todayCounts + 1)]
+    const [dailyCouponResult] = await DB.query(insertDailySql, injectDatas)
+    console.log(dailyCouponResult);
+    console.log('notover');
+  }
+
+
+  res.json(output)
 })
+
 
 /*1	美式
 2	日式

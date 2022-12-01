@@ -178,7 +178,7 @@ router.get("/RandomOrderStep4", async (req, res) => {
   // return res.json(newDay);
 
   const orderSql =
-    "INSERT INTO `orders`(`member_sid`, `shop_sid`, `deliver_sid`,`order_time`, `order_total`, `sale`, `paid`, `pay_method`, `deliver_fee`, `shop_order_status`, `deliver_order_status`, `total_amount`, `receive_name`, `receive_phone`, `receive_address`, `order_complete`) VALUES (1,89,1,?,?,?,1,0,?,1,1,?,'ゆう','0912345678','你家',1)";
+    "INSERT INTO `orders`(`member_sid`, `shop_sid`, `deliver_sid`,`order_time`, `order_total`, `sale`, `paid`, `pay_method`, `deliver_fee`, `shop_order_status`, `deliver_order_status`, `total_amount`, `receive_name`, `receive_phone`, `receive_address`, `order_complete`) VALUES (1,89,1,?,?,?,1,0,?,1,1,?,'ゆう','0912345678','台北市大安區復興南路一段390號2樓',0)";
 
   const orderDetail = [newDay, order_total, sale, fee, total_amount];
 
@@ -213,7 +213,7 @@ router.get("/RandomOrderStep4", async (req, res) => {
   const deliverOrderDetail = [
     shopOrderSid,
     orderSid,
-    deliver_take_time,
+    null,
     complete_time,
     fee,
     deliver_take_time
