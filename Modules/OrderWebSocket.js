@@ -79,7 +79,6 @@ const OrderWebSocket = (server) => {
         const receiveSide = MSG.receive_side;
         const orderSid = MSG.orderSid;
         console.log({receiveSid});
-        // TODO: 這裡要寫入資料庫
         /*{
       deliveMsg: inputContent.trim(),
       receive_sid: targetSid,
