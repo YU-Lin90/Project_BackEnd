@@ -165,7 +165,7 @@ app.post('/deliverlogin', async(req, res)=>{
   res.json(output);
 })
 /* ----------------------------- */
-app.use('/deliver', deliver);
+app.use('/deliver', require('./routes/deliver'));
 /* ----------------------------- */
 
 
