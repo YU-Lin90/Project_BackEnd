@@ -55,7 +55,7 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   //[1,5]
   const sqlBefore = "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE    "
   //LIMIT 1
-  const sqlAfter = " `sid` !=101  ORDER BY RAND() LIMIT 30  "
+  const sqlAfter = " `sid` !=101  ORDER BY RAND() LIMIT 29  "
   const fullSql = sqlBefore + sqlSpilit + sqlAfter
   // console.log('完整SQL:'+fullSql);
   const [result] = await DB.query(fullSql)
@@ -84,11 +84,11 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   //展示用 獲得固定店家資料
   //===============================================分隔線================================================
   //        要的店家SID
-  // const presentationSid = 89
-  // const forShowSql = "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE `sid` = ?"
-  // const [[showShopData]] = await DB.query(forShowSql,presentationSid)
-  // console.log(showShopData);
-  // result.unshift(showShopData)
+  const presentationSid = 89
+  const forShowSql = "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE `sid` = ?"
+  const [[showShopData]] = await DB.query(forShowSql,presentationSid)
+  console.log(showShopData);
+  result.unshift(showShopData)
   //===============================================分隔線================================================
   const gettedShopSid = result[0].sid
 
