@@ -32,7 +32,7 @@ router.post("/:shop_sid", upload.none(), async (req, res) => {
   };
 
   const option_type_sql =
-    "INSERT INTO `options_types`(`name`, `shop_sid`, `max`, `min`) VALUES (?,?,?,?)";
+    "INSERT INTO `options_types`(`name`, `shop_sid`, `min`, `max`) VALUES (?,?,?,?)";
   const [option_type_result] = await db.query(option_type_sql, [
     name,
     shop_sid,
