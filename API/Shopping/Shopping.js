@@ -84,7 +84,7 @@ router.use("/", async (req, res, next) => {
       //加入餐點的sid、name、price這三行
       products = ` , products.sid AS products_sid , products.name AS products_name , products.price `;
       //left join 餐點所屬店家sid=店家的sid、name、price
-      join = ` left Join products on shop.sid = products.shop_sid `;
+      join = ` inner Join products on shop.sid = products.shop_sid `;
       //搜尋字段中的第一個
       where += ` AND shop.\`name\` LIKE ${DB.escape("%" + search[0] + "%")}
             OR products.\`name\` LIKE ${DB.escape("%" + search[0] + "%")}
