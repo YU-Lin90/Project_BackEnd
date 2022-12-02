@@ -26,8 +26,8 @@ router.use("/Choosed", async (req, res) => {
       element.post_time = postTime;
       element.post_content = element.post_content.slice(1,element.post_content.length - 1)
     }
-
-    return res.json(getData);
+    res.json(getData);
+    return 
   }
 });
 
@@ -64,8 +64,8 @@ router.use("/", async (req, res) => {
       dataArray[getSide][sid] = element
       // peoples.add(element.post_sid);
     }
-
-    return res.json(dataArray);
+    res.json(dataArray);
+    return 
   }
 });
 

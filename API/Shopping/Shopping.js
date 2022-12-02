@@ -26,6 +26,11 @@ router.use("/", async (req, res, next) => {
   let price_min = req.query.price_min ? Number(req.query.price_min.trim()) : 0;
   //是否有配送時間
   let wait_time = req.query.wait_time ? Number(req.query.wait_time.trim()) : 0;
+  //是否有排序方式
+  let order = req.query.order
+
+  console.log(order)
+
 
   //預設搜尋來源為店家
   let origin = ` shop `;
@@ -33,6 +38,8 @@ router.use("/", async (req, res, next) => {
   //SQL條件字串
   let where = ` WHERE shop.sid <> '101' `;
 
+ //SQL資料排序方式(預設是按照評分)
+  order = ` ORDER BY average_evaluation DESC `;
 
   console.log("價格上限",price_max)
   console.log("價格下限",price_min)

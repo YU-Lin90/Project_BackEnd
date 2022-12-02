@@ -3,7 +3,6 @@ const DB = require('../Modules/ConnectDataBase');
 const moment = require("moment-timezone");
 const jwt = require('jsonwebtoken')
 const createEchoServer = (server) => {
-    //TODO:已讀未讀要做?
     const wsServer = new WebSocket.Server({ server });
     //===============================================分隔線================================================
     //使用方法: 前端在載入時傳入 socket.send(`{"post_side":1/2/3/4}`)

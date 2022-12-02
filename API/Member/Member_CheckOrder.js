@@ -26,6 +26,7 @@ router.get("/GetSelectDetails", async (req, res) => {
 router.get("/OrderDetails", async (req, res) => {
   const output = {};
   const orderSid = req.query.orderSid;
+  console.log({orderSid});
   const memberSid = req.token.sid;
   // console.log(req.query);
   const sql =
@@ -44,19 +45,41 @@ router.get("/OrderDetails", async (req, res) => {
 
   const productSql = "SELECT od.* ,p.name FROM `order_detail` od LEFT JOIN `products` p ON od.`product_sid` = p.`sid` WHERE od.`order_sid` = ?"
   const [productResult] = await DB.query(productSql,orderSid)
-  output.productResult = productResult
-  // console.log(orderResult);
+  //===============================================分隔線================================================
+  //選項細節  放進商品清單裡面
+    for(let element of productResult){
+      const productSid = element.product_sid
+      const optionSql = "SELECT `option_detail_sid`, `options`, `option_price` FROM `order_option` WHERE `order_sid`=? AND `product_sid` = ? "
+      const [result] = await DB.query(optionSql,[orderSid,productSid])
+      element.options = result
+    }
+    console.log(productResult);
+    output.productResult = productResult
+    /*{
+      sid: 539,
+      order_sid: 222,
+      product_sid: 1107,
+      product_price: 120,
+      amount: 1,
+      name: '奶油蔬菜雞肉麵'
+    }, */
   //店家接單狀態
   const storeAcept = !!orderResult.shop_order_status;
   //外送員接單狀態 用不到?
   const deliverTake = !!orderResult.deliver_order_status;
+
+
+
+
   //===============================================分隔線================================================
   //stepNow  1 店家還沒接單  2 店家還沒完成 3店家完成外送員還沒取餐  4外送員已取餐還沒到
   //店家如果還沒接單 到這裡結束(等待店家接單狀態)
   if (!storeAcept) {
     //階段1 店家還沒接單
+    console.log('進到沒接單');
     output.stepNow = 1;
-    return res.json(output);
+    res.json(output);
+    return 
   }
   //===============================================分隔線================================================
   //店家已接單
@@ -74,7 +97,8 @@ router.get("/OrderDetails", async (req, res) => {
   if (!shopResult.cook_finish) {
     //階段2 店家還沒完成
     output.stepNow = 2;
-    return res.json(output);
+    res.json(output);
+    return 
   }
   //===============================================分隔線================================================
   //店家完成 外送還沒取餐
@@ -85,7 +109,8 @@ router.get("/OrderDetails", async (req, res) => {
     );
     //階段3 店家完成 外送員還沒取餐
     output.stepNow = 3;
-    return res.json(output);
+    res.json(output);
+    return 
   }
   //===============================================分隔線================================================
   //外送員已取餐
@@ -104,7 +129,8 @@ router.get("/OrderDetails", async (req, res) => {
   );
   output.deliverResult = deliverResult;
   output.stepNow = 4;
-  return res.json(output);
+  res.json(output);
+  return 
 });
 //===============================================分隔線================================================
 //orderResult

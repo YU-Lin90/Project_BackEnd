@@ -122,15 +122,7 @@ const deliverTokenLoginCheck = async (req, res, next) => {
     }
   }
 };
-/* ----------------外送員接單------------------ */
 
-async function getListData(req, res){
-  const sql1 = "SELECT shop_order.sid, shop_order.member_sid, shop_order.order_sid, shop_order.shop_sid, shop.name, shop.address, orders.deliver_memo, orders.deliver_fee FROM (shop_order INNER JOIN shop ON shop.sid = shop_order.shop_sid)INNER JOIN orders ON shop_order.order_sid = orders.sid WHERE shop_order.deliver_sid IS NULL";
-  [rows1] = await db.query(sql1);
-  return {rows1};
-}
-
-/* ------------------------------------------ */
 
 /* ----------外送員登入------------ */
 app.post('/deliverlogin', async(req, res)=>{
@@ -173,71 +165,10 @@ app.post('/deliverlogin', async(req, res)=>{
   res.json(output);
 })
 /* ----------------------------- */
-
-/* ----------外送員接單------------ */
-app.get('/api', async (req, res)=>{
-  res.json(await getListData(req, res));
-});
+app.use('/deliver', require('./routes/deliver'));
 /* ----------------------------- */
-/* ----------外送員訂單確認------------ */
-app.post('/sendOrder', async (req, res)=>{
-  const sqlenter = "INSERT INTO `deliver_order`(`member_sid`, `shop_sid`, `deliver_sid`, `store_order_sid`, `order_sid`, `deliver_memo`, `order_finish`, `deliver_fee`,  `deliver_check_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-  await db.query(sqlenter, 
-      [
-          req.body.member_sid, 
-          req.body.shop_sid, 
-          req.body.deliver_sid, 
-          req.body.sid, 
-          req.body.order_sid, 
-          req.body.deliver_memo, 
-          req.body.order_finish, 
-          req.body.deliver_fee
-      ]);
-  const sqlshop = "UPDATE shop_order SET deliver_sid=? WHERE order_sid=?"
-  await db.query(sqlshop, [req.body.deliver_sid, req.body.order_sid]);
-  const sql2 = "UPDATE shop_order SET shop_order.deliver_order_sid = (SELECT deliver_order.sid FROM deliver_order WHERE shop_order.order_sid = deliver_order.order_sid)";
-  await db.query(sql2);
-})
-/* --------------------------------- */
-/* ----------接單後訂單預覽------------- */
-app.get('/deliverorder/:id', async(req, res)=>{
-  const sql1 ="SELECT member.name,  shop.name AS shopname, shop.address, shop.phone, member.name, deliver_order.deliver_memo,  deliver_order.deliver_fee, deliver_order.order_sid FROM (deliver_order INNER JOIN shop ON deliver_order.shop_sid = shop.sid) INNER JOIN member ON deliver_order.member_sid = member.sid WHERE order_sid = ?";
-  const [rows] = await db.query(sql1, [req.params.id]);
-  const sql2 ="SELECT products.name, order_detail.product_price, order_detail.amount FROM (order_detail INNER JOIN products ON order_detail.product_sid = products.sid ) WHERE order_detail.order_sid = ?";
-  const [food] = await db.query(sql2, [req.params.id]);
-  const sql3 ="SELECT SUM(order_detail.product_price*order_detail.amount)AS total FROM `order_detail` WHERE order_sid =?"
-  const [total] = await db.query(sql3, [req.params.id]);
-  res.json({rows,food,total});
-})
-/* ---------------------------------- */
-/* ----------接單後訂單取餐鈕----------- */
-app.put('/deliverorder/:id', async(req, res)=>{
-  const sql1 = "UPDATE deliver_order SET `deliver_take_time`=NOW() WHERE order_sid=?";
-  await db.query(sql1, [req.params.id]);
-  const sql2 = "UPDATE shop_order SET `deliver_take`=1 WHERE order_sid=?";
-  await db.query(sql2, [req.params.id]);
-})
-/* ---------------------------------- */
-/* -----------接單後訂單完成鈕---------- */
-app.put('/finishdeliverorder/:id', async(req, res)=>{
-  const sql1 = "UPDATE deliver_order SET `complete_time`=NOW(), `order_finish`=1 WHERE order_sid=?";
-  await db.query(sql1, [req.params.id]);
-})
-/* ---------------------------------- */
-/* --------------過往紀錄------------- */
-app.get('/dataslist/:id', async(req, res)=>{
-  const sql = "SELECT deliver_order.order_sid, deliver_order.deliver_order_sid, shop.name AS shopname, shop.address, deliver_fee, member.name, deliver_order.deliver_check_time, deliver_order.deliver_take_time, deliver_order.complete_time FROM( deliver_order INNER JOIN member ON deliver_order.member_sid = member.sid) INNER JOIN shop ON deliver_order.shop_sid = shop.sid WHERE deliver_order.order_finish = 1 AND deliver_order.deliver_sid = ?";
-  const [listrow] = await db.query(sql,[req.params.id]);
-  res.json(listrow);
-})
-/* ---------------------------------- */
-/* -----------過往紀錄菜單------------- */
-app.get('/foodmeun/:id', async(req, res)=>{
-  const sql ="SELECT products.name, products.price, order_detail.amount FROM (order_detail INNER JOIN products ON order_detail.product_sid = products.sid ) WHERE order_detail.order_sid = ?";
-  const [food] = await db.query(sql, [req.params.id]);
-  res.json(food);
-})
-/* ---------------------------------- */
+
+
 //管理員
 const adminTokenLoginCheck = async (req, res, next) => {
   const tokenGet = req.header("Authorization").replace("Bearer ", "");
@@ -266,6 +197,13 @@ const adminTokenLoginCheck = async (req, res, next) => {
 function changeTime(oldTime, form) {
   return moment(oldTime).tz("Asia/Taipei").format(form);
 }
+//獲得店家地址
+app.get("/getStoreAddress", async (req,res)=>{
+  const shopSid = req.query.shopSid
+  const sql = "SELECT address FROM shop WHERE sid = ?"
+  const [[{address}]] = await DB.query(sql,shopSid)
+  res.json(address)
+});
 
 //購物流程
 //LinePay
@@ -459,6 +397,7 @@ const port = process.env.SERVER_PORT || 3001;
 //設定監聽port
 const server = app.listen(port, () => {
   console.log("路由伺服器啟動，埠號:", port);
+  console.log("現在時間:" + new Date());
 });
 //※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
 

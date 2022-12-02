@@ -29,7 +29,8 @@ router.use("/confirm", async (req, res) => {
   "UPDATE `orders` SET `store_order_sid` = ? , `shop_order_status` = 1 WHERE sid = ?";
   let [updateResult] = await DB.query(sql, [shopOrderSid,orderSid]);
   const OP = [updateResult.affectedRows,insertResult.affectedRows]
-  return res.json(OP);
+  res.json(OP);
+  return 
 });
 
 router.use("/CompleteOrder", async (req, res) => {
@@ -45,7 +46,8 @@ router.use("/CompleteOrder", async (req, res) => {
   let [updateResult] = await DB.query(sql,[storeSid,shopOrderSid]);
   const OP = updateResult.affectedRows
   console.log(OP);
-  return res.json(OP);
+  res.json(OP);
+  return 
 
 
   // return res.json(1);
@@ -57,7 +59,8 @@ router.use("/setWaitTime", async (req, res) => {
 
   const sql = "UPDATE `shop` SET `wait_time`= ? WHERE `sid`=?"
   const [{affectedRows}] = await DB.query(sql,[setTime,shopSid])
-  return res.json(affectedRows)
+  res.json(affectedRows)
+  return 
 })
 
 
