@@ -359,6 +359,7 @@ app.use("/store-admin/type", require("./routes/type"));
 app.use("/store-admin/product", require("./routes/product"));
 app.use("/store-admin/option", require("./routes/option"));
 app.use("/store", require("./routes/productList"))
+app.use('/option-form', require('./routes/optionForm'))
 //客服
 app.use(
   "/Store/ChatServiceToAdmin",
