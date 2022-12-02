@@ -19,6 +19,8 @@ const moment = require("moment-timezone");
   },
   storeMemo: '店家備註',
   deliverMemo:'外送員備註'
+        dailyCouponSid: dailyCouponSid,
+      dailyCouponAmount: dailyCouponAmount,
 }*/
 router.use("/", async (req, res) => {
   const output = {}
@@ -31,7 +33,7 @@ router.use("/", async (req, res) => {
   //NOW()
   const order_total = Number(postData.details.shopPriceTotal)
   const coupon_sid = postData.couponSid || 0
-  const saled = Number(order_total) - Number(postData.couponCutAmount)
+  const saled = Number(order_total) - Number(postData.couponCutAmount) - Number(postData.dailyCouponAmount)
   const daily_coupon_sid = postData.dailyCouponSid || 0
   const deliverFee = postData.deliverFee
   const cook_time = 40
@@ -66,7 +68,6 @@ router.use("/", async (req, res) => {
     const amount = data.amount
     const price = data.cuttedPrice
     const productSql = "INSERT INTO `order_detail`( `order_sid`, `product_sid`, `product_price`, `amount`) VALUES (?,?,?,?)"
-    // TODO:還有選項要加入
     const [result] = await DB.query(productSql, [orderSid, productSid, price, amount])
     console.log(result.insertId);
     detailSids.push(result.insertId)
@@ -78,11 +79,10 @@ router.use("/", async (req, res) => {
       const detailName = element.name
       const detailPrice = element.price
       const optionSql = "INSERT INTO `order_option`(`order_sid`, `product_sid`, `option_detail_sid`, `options`, `option_price`) VALUES (?,?,?,?,?)"
-      const optionDatas = [orderSid, productSid,detailSid,detailName,detailPrice]
-      const [detailResult] = await DB.query(optionSql,optionDatas)
+      const optionDatas = [orderSid, productSid, detailSid, detailName, detailPrice]
+      const [detailResult] = await DB.query(optionSql, optionDatas)
       console.log(detailResult);
     }
-
     //===============================================分隔線================================================
 
   }
@@ -143,6 +143,12 @@ router.use("/", async (req, res) => {
     const couponSql = "UPDATE `coupon` SET `order_sid`= ? , `is_used`= 1,`used_time`= NOW() WHERE `member_sid` = ? AND sid = ?"
     const [couponResult] = await DB.query(couponSql, [orderSid, memberSid, coupon_sid])
     output.couponResult = couponResult
+  }
+  //每日優惠券更新
+  if (daily_coupon_sid !== 0) {
+    const dailyCouponSql = "UPDATE `daily_coupon` SET `is_used`=1,`use_time`=NOW() WHERE `sid`=?"
+    const [result] = await DB.query(dailyCouponSql, daily_coupon_sid)
+    console.log(result);
   }
   res.json(output)
 })

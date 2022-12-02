@@ -24,8 +24,8 @@ router.use("/checkDisConfirm", async (req, res) => {
   });
 
 
-
-  return res.json(getData);
+  res.json(getData);
+  return 
 });
 
 //未接單 細節 傳訂單SID進來
@@ -103,7 +103,8 @@ router.use("/checkDisConfirmDetail", async (req, res) => {
     ]
     
 } */
-  return res.json(output);
+res.json(output);
+  return 
 
 });
 
@@ -128,7 +129,8 @@ router.use("/checkConfirmed", async (req, res) => {
       .tz("Asia/Taipei")
       .format("HH:mm:ss")
   });
-  return res.json(getData);
+  res.json(getData);
+  return 
 });
 //已接單 細節
 router.use("/checkConfirmedDetail", async (req, res) => {
@@ -160,7 +162,8 @@ router.use("/checkConfirmedDetail", async (req, res) => {
 
 
   const output = { getData, productDetails }
-  return res.json(output);
+  res.json(output);
+  return 
 });
 //已完成 概覽
 router.use("/checkCompleted", async (req, res) => {
@@ -180,7 +183,8 @@ router.use("/checkCompleted", async (req, res) => {
     element.shop_complete_time = timeChanged;
     element.orderNumber = 'S' + element.sid + element.shop_sid + element.member_sid
   });
-  return res.json(getData);
+  res.json(getData);
+  return 
 });
 //已完成 細節
 router.use("/checkCompletedDetail", async (req, res) => {
@@ -212,7 +216,8 @@ router.use("/checkCompletedDetail", async (req, res) => {
 
 
   const output = { getData, productDetails }
-  return res.json(output);
+  res.json(output);
+  return 
 });
 
 router.use("/readTime", async (req, res) => {

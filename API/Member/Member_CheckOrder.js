@@ -78,7 +78,8 @@ router.get("/OrderDetails", async (req, res) => {
     //階段1 店家還沒接單
     console.log('進到沒接單');
     output.stepNow = 1;
-    return res.json(output);
+    res.json(output);
+    return 
   }
   //===============================================分隔線================================================
   //店家已接單
@@ -96,7 +97,8 @@ router.get("/OrderDetails", async (req, res) => {
   if (!shopResult.cook_finish) {
     //階段2 店家還沒完成
     output.stepNow = 2;
-    return res.json(output);
+    res.json(output);
+    return 
   }
   //===============================================分隔線================================================
   //店家完成 外送還沒取餐
@@ -107,7 +109,8 @@ router.get("/OrderDetails", async (req, res) => {
     );
     //階段3 店家完成 外送員還沒取餐
     output.stepNow = 3;
-    return res.json(output);
+    res.json(output);
+    return 
   }
   //===============================================分隔線================================================
   //外送員已取餐
@@ -126,7 +129,8 @@ router.get("/OrderDetails", async (req, res) => {
   );
   output.deliverResult = deliverResult;
   output.stepNow = 4;
-  return res.json(output);
+  res.json(output);
+  return 
 });
 //===============================================分隔線================================================
 //orderResult

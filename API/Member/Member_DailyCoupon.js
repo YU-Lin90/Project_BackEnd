@@ -3,8 +3,37 @@ const router = express.Router();
 const DB = require("../../Modules/ConnectDataBase");
 const moment = require("moment-timezone");
 
-const cutamounts = [30, 20, 10]
+function changeTime(oldTime, form) {
+  return moment(oldTime).tz("Asia/Taipei").format(form);
+}
 
+//確認今天拿到幾次
+router.get("/GetDailyTimes", async (req, res) => {
+  const memberSid = req.token.sid
+  const YY = new Date().getFullYear()
+  const MM = new Date().getMonth() + 1
+  const DD = new Date().getDate()
+  const dateString = YY + '-' + MM + '-' + DD
+  const todayTimesSql = 'SELECT MAX(`count`) todayCounts  FROM `daily_coupon` WHERE `member_sid` = ? AND `get_date` = ?'
+  let [[{ todayCounts }]] = await DB.query(todayTimesSql, [memberSid, dateString])
+  res.json(todayCounts)
+})
+
+//確認今天還沒用的 作在元件裡面
+router.get("/CheckTodayNotUse", async (req, res) => {
+  const memberSid = req.token.sid
+  const YY = new Date().getFullYear()
+  const MM = new Date().getMonth() + 1
+  const DD = new Date().getDate()
+  const dateString = YY + '-' + MM + '-' + DD
+  const checkNotUseSql = "SELECT  MIN(dc.`count`) count ,dc.sid,dc.`shop_sid`,s.`name`,dc.`member_sid`, dc.`expire`, dc.`cut_amount`, dc.`is_used` FROM `daily_coupon` dc  LEFT JOIN `shop` s  ON dc.`shop_sid`=s.`sid` WHERE `member_sid` = ? AND `is_used` =0 AND `expire` > NOW()"
+  let [[result]] = await DB.query(checkNotUseSql, [memberSid, dateString])
+  // result.expire = changeTime(result.expire, 'YYYY/MM/DD HH:mm:ss')
+  console.log(result);
+  res.json(result)
+})
+
+//獲得隨機店家
 router.post("/GetRandomStoreWithType", async (req, res) => {
   const output = {}
   //篩選完成 傳進來的是不要的
@@ -26,7 +55,7 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   //[1,5]
   const sqlBefore = "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE    "
   //LIMIT 1
-  const sqlAfter = " `sid` !=101  ORDER BY RAND() LIMIT 29  "
+  const sqlAfter = " `sid` !=101  ORDER BY RAND() LIMIT 30  "
   const fullSql = sqlBefore + sqlSpilit + sqlAfter
   // console.log('完整SQL:'+fullSql);
   const [result] = await DB.query(fullSql)
@@ -55,11 +84,11 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   //展示用 獲得固定店家資料
   //===============================================分隔線================================================
   //        要的店家SID
-  const presentationSid = 89
-  const forShowSql = "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE `sid` = ?"
-  const [[showShopData]] = await DB.query(forShowSql,presentationSid)
-  console.log(showShopData);
-  result.unshift(showShopData)
+  // const presentationSid = 89
+  // const forShowSql = "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE `sid` = ?"
+  // const [[showShopData]] = await DB.query(forShowSql,presentationSid)
+  // console.log(showShopData);
+  // result.unshift(showShopData)
   //===============================================分隔線================================================
   const gettedShopSid = result[0].sid
 
@@ -70,16 +99,18 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   const todayTimesSql = 'SELECT MAX(`count`) todayCounts  FROM `daily_coupon` WHERE `member_sid` = ? AND `get_date` = ?'
   let [[{ todayCounts }]] = await DB.query(todayTimesSql, [memberSid, dateString])
   console.log(todayCounts);//直接就是數字 今天的次數
+  const cutamounts = [30, 20, 10]
   //3次就超過了
   if (todayCounts===3) {
     output.over = true
-    // console.log('over3');
+    console.log('over3');
   }
   else {
+    const countIntoSql= todayCounts?todayCounts:0
     //如果三次以下就寫入
     const insertDailySql = "INSERT INTO `daily_coupon`(`member_sid`, `shop_sid`, `expire`, `cut_amount`, `get_date`, `count`) VALUES (?,?,DATE_ADD(NOW(),INTERVAL 2 HOUR),?,NOW(),?) "
     //old
-    const injectDatas = [memberSid, gettedShopSid, cutamounts[todayCounts], (todayCounts + 1)]
+    const injectDatas = [memberSid, gettedShopSid, cutamounts[countIntoSql], (todayCounts + 1)]
     const [dailyCouponResult] = await DB.query(insertDailySql, injectDatas)
     console.log(dailyCouponResult);
     console.log('notover');

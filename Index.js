@@ -197,6 +197,13 @@ const adminTokenLoginCheck = async (req, res, next) => {
 function changeTime(oldTime, form) {
   return moment(oldTime).tz("Asia/Taipei").format(form);
 }
+//獲得店家地址
+app.get("/getStoreAddress", async (req,res)=>{
+  const shopSid = req.query.shopSid
+  const sql = "SELECT address FROM shop WHERE sid = ?"
+  const [[{address}]] = await DB.query(sql,shopSid)
+  res.json(address)
+});
 
 //購物流程
 //LinePay

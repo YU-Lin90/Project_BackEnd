@@ -19,6 +19,8 @@ const moment = require("moment-timezone");
   },
   storeMemo: '店家備註',
   deliverMemo:'外送員備註'
+        dailyCouponSid: dailyCouponSid,
+      dailyCouponAmount: dailyCouponAmount,
 }*/
 router.use("/", async (req, res) => {
   // const output = {}
@@ -31,7 +33,7 @@ router.use("/", async (req, res) => {
   //NOW()
   const order_total = Number(postData.details.shopPriceTotal)
   const coupon_sid = postData.couponSid || 0
-  const saled = Number(order_total) - Number(postData.couponCutAmount)
+  const saled = Number(order_total) - Number(postData.couponCutAmount) - Number(postData.dailyCouponAmount)
   const daily_coupon_sid = postData.dailyCouponSid || 0
   const deliverFee = postData.deliverFee
   const cook_time = 40
@@ -40,10 +42,10 @@ router.use("/", async (req, res) => {
   const receivePhone = postData.receivePhone
   const sendAddress = postData.sendAddress
   //===============================================分隔線================================================
-  const valueArray = [memberSid,shopSid,shopMemo,deliverMemo,order_total,coupon_sid,saled,0,1,daily_coupon_sid,deliverFee,cook_time,total_amount,receiveName,receivePhone,sendAddress]
+  const valueArray = [memberSid, shopSid, shopMemo, deliverMemo, order_total, coupon_sid, saled, 0, 1, daily_coupon_sid, deliverFee, cook_time, total_amount, receiveName, receivePhone, sendAddress]
   console.log(postData);
   const sql = "INSERT INTO `orders`(`member_sid`, `shop_sid`, `shop_memo`, `deliver_memo`, `order_time`, `order_total`, `coupon_sid`, `sale`, `paid`, `pay_method`, `daily_coupon_sid`, `deliver_fee`, `cook_time`, `total_amount`, `receive_name`, `receive_phone`, `receive_address`) VALUES (?,?,?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?,?)"
-  const  [{insertId}] = await DB.query(sql,valueArray) 
+  const [{ insertId }] = await DB.query(sql, valueArray)
   console.log(insertId);
   /* list :{
     "amount": 1,
@@ -83,15 +85,39 @@ router.use("/", async (req, res) => {
 }*/
   //===============================================分隔線================================================
   const orderSid = insertId
-  for(let sid in productDatas){
+  for (let sid in productDatas) {
     const data = productDatas[sid]
     const productSid = sid
     const amount = data.amount
-    const price =  data.cuttedPrice
+    const price = data.cuttedPrice
     const productSql = "INSERT INTO `order_detail`( `order_sid`, `product_sid`, `product_price`, `amount`) VALUES (?,?,?,?)"
-    // TODO:還有選項要加入
-    const [result] = await DB.query(productSql,[orderSid,productSid,price,amount])
+
+    const [result] = await DB.query(productSql, [orderSid, productSid, price, amount])
     console.log(result.insertId);
+    //===============================================分隔線================================================
+    //options
+    for (let element of productDatas[sid].details) {
+      const detailSid = element.sid
+      const detailName = element.name
+      const detailPrice = element.price
+      const optionSql = "INSERT INTO `order_option`(`order_sid`, `product_sid`, `option_detail_sid`, `options`, `option_price`) VALUES (?,?,?,?,?)"
+      const optionDatas = [orderSid, productSid, detailSid, detailName, detailPrice]
+      const [detailResult] = await DB.query(optionSql, optionDatas)
+      console.log(detailResult);
+    }
+    //===============================================分隔線================================================
+
+
+
+
+
+
+
+
+
+
+
+
   }
   //===============================================分隔線================================================
   //紅利增加
@@ -99,20 +125,26 @@ router.use("/", async (req, res) => {
   const newPoint = parseInt(order_total / 10);
   //會員資料表更新
   const memberPointSql = "UPDATE `member` SET `point` = `point` + ?  WHERE `sid` = ?"
-  const [memberResult] = await DB.query(memberPointSql,[newPoint,memberSid])
+  const [memberResult] = await DB.query(memberPointSql, [newPoint, memberSid])
   // output.memberResult = memberResult
   //點數明細資料表更新
-  const pointSql = "INSERT INTO `point_detail`(`member_sid`, `point_amount`, `point_change_time`, `point_change_method`) VALUES (?,?,NOW(),?)"  
-  const pointInsertArray  = [memberSid,newPoint,1]
-  const [pointResult] = await DB.query(pointSql,pointInsertArray);
+  const pointSql = "INSERT INTO `point_detail`(`member_sid`, `point_amount`, `point_change_time`, `point_change_method`) VALUES (?,?,NOW(),?)"
+  const pointInsertArray = [memberSid, newPoint, 1]
+  const [pointResult] = await DB.query(pointSql, pointInsertArray);
   console.log(pointResult);
   //===============================================分隔線================================================
   //優惠券更新
-  if(coupon_sid!==0){
+  if (coupon_sid !== 0) {
     const couponSql = "UPDATE `coupon` SET `order_sid`= ? , `is_used`= 1,`used_time`= NOW() WHERE `member_sid` = ? AND sid = ?"
-    const [couponResult] = await DB.query(couponSql,[orderSid,memberSid,coupon_sid])    
+    const [couponResult] = await DB.query(couponSql, [orderSid, memberSid, coupon_sid])
   }
-  output = {orderSid:orderSid,sucess:true}
+  output = { orderSid: orderSid, sucess: true }
+  //每日優惠券更新
+  if (daily_coupon_sid !== 0) {
+    const dailyCouponSql = "UPDATE `daily_coupon` SET `is_used`=1,`use_time`=NOW() WHERE `sid`=?"
+    const [result] = await DB.query(dailyCouponSql, daily_coupon_sid)
+    console.log(result);
+  }
   res.json(output)
 })
 
