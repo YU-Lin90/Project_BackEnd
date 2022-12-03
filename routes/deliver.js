@@ -32,6 +32,14 @@ router.post('/sendOrder', async (req, res)=>{
     await db.query(sql2);
     const sql3 = "SELECT * FROM shop_order WHERE order_sid = ?"  
     const [add] = await db.query(sql3, [req.body.order_sid]);
+    // const sql4 = "UPDATE orders SET deliver_sid = ?, deliver_order_sid = ?, deliver_order_status=1 WHERE sid = ?";   //還少deliver_order_sid 
+    const sql4 = "UPDATE orders SET deliver_sid = ?, deliver_order_status=1 WHERE sid = ?";
+    await db.query(sql4, 
+        [
+            req.body.deliver_sid, 
+                                        //還少deliver_order_sid 
+            req.body.deliver_sid, 
+        ]);
     res.json(add);
 })
 /* ----------接單後訂單預覽------------- */
