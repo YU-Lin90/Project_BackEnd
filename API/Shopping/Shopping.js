@@ -45,7 +45,7 @@ router.use("/", async (req, res, next) => {
   console.log("價格下限",price_min)
   console.log("等待時間",wait_time)
 
-  let food_type = ` , food_type.type_name `
+  let food_type = ` , food_type.sid AS food_type_sid , food_type.type_name `
   let food_join = ` left join food_type on shop.food_type_sid = food_type.sid `
   //SQL搜尋後
   //SELECT shop.*  , products.sid AS products_sid , products.name AS products_name , products.price FROM `shop` left Join products on shop.sid = products.shop_sid
@@ -148,7 +148,7 @@ router.use("/", async (req, res, next) => {
     console.log("SQL語法", sql_search);
   } else {
     //若無搜尋則顯示所有商家
-    sql_search = ` SELECT * ${food_type} from shop ${food_join} ${where} ${order}`;
+    sql_search = ` SELECT shop.* ${food_type} from shop ${food_join} ${where} ${order}`;
 
     //要資料
     let [result] = await DB.query(sql_search);
