@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
   data.types = type_rows;
   data.products = product_rows;
   data.options_types = option_type_rows;
-  data.options = option_rows;
+  data.options = option_rows; 
 
   res.json(data);
 });

@@ -32,7 +32,7 @@ router.post("/:shop_sid", upload.none(), async (req, res) => {
   };
 
   const option_type_sql =
-    "INSERT INTO `options_types`(`name`, `shop_sid`, `max`, `min`) VALUES (?,?,?,?)";
+    "INSERT INTO `options_types`(`name`, `shop_sid`, `min`, `max`) VALUES (?,?,?,?)";
   const [option_type_result] = await db.query(option_type_sql, [
     name,
     shop_sid,
@@ -45,7 +45,7 @@ router.post("/:shop_sid", upload.none(), async (req, res) => {
   for (let i = 0; i < optionData.length; i++) {
     const [option_result] = await db.query(option_sql, [
       optionData[i].name,
-      optionData[i].price,
+      optionData[i].price ? optionData[i].price : 0,
       option_type_result.insertId,
     ]);
     console.log(option_result);
@@ -82,7 +82,7 @@ router.put("/:shop_sid", async (req, res) => {
   for (let i = 0; i < optionData.length; i++) {
     const [insert_option_result] = await db.query(insert_option_sql, [
       optionData[i].name,
-      optionData[i].price,
+      optionData[i].price ? optionData[i].price : 0,
       sid,
     ]);
     console.log(insert_option_result);
