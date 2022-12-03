@@ -13,6 +13,7 @@ const cors = require('cors');
 const multer = require("multer");
 const fs = require("fs").promises;
 const { body, validationResult } = require("express-validator");
+const bcrypt = require('bcryptjs');
 
 
 
@@ -133,7 +134,6 @@ router.post('/add',
         console.log(req.body);
         try {
             if (!req.file) {
-
                 const sql = "INSERT INTO `member`(`email`, `password`,`name`,`phone`,`image`,`point`) VALUES (?,?,?,?,?,'1000')";
                 const image = null;
                 const [result] = await db.query(sql, [
@@ -143,6 +143,13 @@ router.post('/add',
                     req.body.phone,
                     { image },]
                 );
+                const a='SELECT sid FROM `member`  ORDER BY sid DESC LIMIT 0 , 1'
+                const [re]=await db.query(a)
+                const b=re[0].sid
+
+                const pointDetailsql = "INSERT INTO `point_detail`(`member_sid`,`point_amount`,`point_change_time`,`point_change_method`) VALUES(?,1000,NOW(),2)";
+
+                const [pointData] = await db.query(pointDetailsql,[b]);
                 res.send({
                     code: 0,
                     postData: req.body, // 除錯用
@@ -174,6 +181,13 @@ router.post('/add',
                     req.file.filename,
                 ]);
                 console.log([result]);
+                const a='SELECT sid FROM `member`  ORDER BY sid DESC LIMIT 0 , 1'
+                const [re]=await db.query(a)
+                const b=re[0].sid
+
+                const pointDetailsql = "INSERT INTO `point_detail`(`member_sid`,`point_amount`,`point_change_time`,`point_change_method`) VALUES(?,1000,NOW(),2)";
+
+                const [pointData] = await db.query(pointDetailsql,[b]);
 
 
                 //送出回應
