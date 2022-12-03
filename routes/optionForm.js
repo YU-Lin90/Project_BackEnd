@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
   };
 
   const shop_sql =
-    "SELECT * FROM `shop` s LEFT JOIN `products` p ON p.shop_sid=s.sid WHERE p.sid=?";
+    "SELECT s.* FROM `shop` s LEFT JOIN `products` p ON p.shop_sid=s.sid WHERE p.sid=?";
   const [[shop_rows]] = await db.query(shop_sql, [sid]);
 
   const product_sql = "SELECT * FROM `products` WHERE sid=?";
