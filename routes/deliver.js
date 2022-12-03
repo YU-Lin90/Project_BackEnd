@@ -48,7 +48,7 @@ router.get('/deliverorder/:id', async(req, res)=>{
     const [rows] = await db.query(sql1, [req.params.id]);
     const sql2 ="SELECT products.name, order_detail.product_price, order_detail.amount FROM (order_detail INNER JOIN products ON order_detail.product_sid = products.sid ) WHERE order_detail.order_sid = ?";
     const [food] = await db.query(sql2, [req.params.id]);
-    const sql3 ="SELECT SUM(order_detail.product_price*order_detail.amount)AS total FROM `order_detail` WHERE order_sid =?"
+    const sql3 = "SELECT SUM(orders.sale+orders.deliver_fee)AS total FROM orders WHERE orders.sid = ? ";
     const [total] = await db.query(sql3, [req.params.id]);
     res.json({rows,food,total});;
 }) 
