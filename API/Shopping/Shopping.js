@@ -1,4 +1,3 @@
-const { config } = require("dotenv");
 const express = require("express");
 const router = express.Router();
 const DB = require("../../Modules/ConnectDataBase");
@@ -28,8 +27,6 @@ router.use("/", async (req, res, next) => {
   let wait_time = req.query.wait_time ? Number(req.query.wait_time.trim()) : 0;
   //是否有排序方式
   let order = req.query.order
-
-  console.log(order)
 
 
   //預設搜尋來源為店家
