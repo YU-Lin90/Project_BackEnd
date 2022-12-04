@@ -7,14 +7,15 @@ function changeTime(oldTime, form) {
 }
 router.get("/GetAddress", async (req, res) => {
   const { side, orderSid }  = req.query
-  // console.log(querys);
+  console.log(orderSid);
   //{ side: '1', orderSid: '1' }
-  const deliverSid = req.token.sid
-  console.log(deliverSid);
+  const deliverSid = 1
+  // console.log(deliverSid);
   //1
-  const sql = "SELECT o.`receive_address` ,s.`name` shopName ,s.`address`, m.`name` memberName FROM `orders` o LEFT JOIN `shop` s ON o.`shop_sid` = s.`sid` LEFT JOIN `member` m ON o.`member_sid` = m.`sid` WHERE o.`sid` = ? AND o.`deliver_sid` = ?"
-  const [[result]] = await DB.query(sql,[orderSid,deliverSid])
-  
+  const sql = "SELECT o.`receive_address` ,s.`name` shopName ,s.`address`, m.`name` memberName FROM `orders` o LEFT JOIN `shop` s ON o.`shop_sid` = s.`sid` LEFT JOIN `member` m ON o.`member_sid` = m.`sid` WHERE o.`sid` = ? "
+  // const sql = "SELECT o.`receive_address` ,s.`name` shopName ,s.`address`, m.`name` memberName FROM `orders` o LEFT JOIN `shop` s ON o.`shop_sid` = s.`sid` LEFT JOIN `member` m ON o.`member_sid` = m.`sid` WHERE o.`sid` = ? AND o.`deliver_sid` = ?"
+  const [[result]] = await DB.query(sql,[orderSid])
+  console.log(result);
 
   res.json(result)
 })
@@ -49,4 +50,13 @@ router.get("/GetChattingContent", async (req, res) => {
   console.log(result);
   res.json(result);
 });
+//獲得取餐/未取餐狀態
+router.get('/GetDeliveStep',async (req,res)=>{
+  const orderSid = req.query.orderSid
+  const checkStepSql = "SELECT `deliver_take` FROM `shop_order` WHERE `order_sid` = ?"
+  const [[{deliver_take}]] = await DB.query(checkStepSql,orderSid)
+  res.json(deliver_take);
+})
+
+
 module.exports = router;
