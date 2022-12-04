@@ -99,6 +99,7 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   const todayTimesSql = 'SELECT MAX(`count`) todayCounts  FROM `daily_coupon` WHERE `member_sid` = ? AND `get_date` = ?'
   let [[{ todayCounts }]] = await DB.query(todayTimesSql, [memberSid, dateString])
   console.log(todayCounts);//直接就是數字 今天的次數
+  //折價金額 第一次30..
   const cutamounts = [30, 20, 10]
   //3次就超過了
   if (todayCounts===3) {
