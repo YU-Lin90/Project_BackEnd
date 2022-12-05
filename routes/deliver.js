@@ -13,6 +13,7 @@ router.get('/deliverlist', async (req, res)=>{
 });
 /* ----------------------------- */
 /* ----------外送員訂單確認------------ */
+//外送員接單(動作)
 router.post('/sendOrder', async (req, res)=>{
     const sqlenter = "INSERT INTO `deliver_order`(`member_sid`, `shop_sid`, `deliver_sid`, `store_order_sid`, `order_sid`, `deliver_memo`, `order_finish`, `deliver_fee`,  `deliver_check_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
     await db.query(sqlenter, 
@@ -30,6 +31,10 @@ router.post('/sendOrder', async (req, res)=>{
     await db.query(sqlshop, [req.body.deliver_sid, req.body.order_sid]);
     const sql2 = "UPDATE shop_order SET shop_order.deliver_order_sid = (SELECT deliver_order.sid FROM deliver_order WHERE shop_order.order_sid = deliver_order.order_sid)";
     await db.query(sql2);
+    //訂單更新資訊
+    const orderSql = "UPDATE `orders` SET `deliver_sid`=? , `deliver_order_status`=1 WHERE `sid` = ? "
+    const [orderUpdateResult] = await db.query(orderSql,[req.body.deliver_sid,req.body.order_sid])    
+    //-----------
     const sql3 = "SELECT * FROM shop_order WHERE order_sid = ?"  
     const [add] = await db.query(sql3, [req.body.order_sid]);
     res.json(add);
