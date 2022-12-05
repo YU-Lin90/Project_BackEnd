@@ -41,10 +41,9 @@ router.use("/", async (req, res) => {
   let memberSid = sid;
 
   let sql =
-    "SELECT p.*,cc.`coupon_name` FROM `point_detail` p LEFT JOIN `coupon_content` cc ON p.`coupon_sid` = cc.`sid` WHERE  `member_sid`= ? ";
+    "SELECT p.*,cc.`coupon_name`,m.`point` FROM `point_detail` p LEFT JOIN `coupon_content` cc ON p.`coupon_sid` = cc.`sid` LEFT JOIN `member` m ON p.`member_sid` = m.`sid` WHERE  `member_sid`= ? ";
 
   let [getData] = await DB.query(sql, memberSid);
-
   // console.log(getData);
   //轉換時間格式
   getData.forEach((element) => {
