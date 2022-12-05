@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../Modules/db_connect');
 /* ----------外送員接單------------ */
 async function getListData(req, res){
-    const sql1 = "SELECT orders.cook_time, shop_order.sid, shop_order.member_sid, shop_order.order_sid, shop_order.shop_sid, shop.name, shop.address, orders.deliver_memo, orders.deliver_fee FROM (shop_order INNER JOIN shop ON shop.sid = shop_order.shop_sid)INNER JOIN orders ON shop_order.order_sid = orders.sid WHERE shop_order.deliver_sid IS NULL";
+    const sql1 = "SELECT member.name AS client, orders.receive_address, orders.cook_time, shop_order.sid, shop_order.member_sid, shop_order.order_sid, shop_order.shop_sid, shop.name, shop.address, orders.deliver_memo, orders.deliver_fee FROM ((shop_order INNER JOIN shop ON shop.sid = shop_order.shop_sid)INNER JOIN orders ON shop_order.order_sid = orders.sid)INNER JOIN member ON shop_order.member_sid = member.sid WHERE shop_order.deliver_sid IS NULL";
     [rows1] = await db.query(sql1);
 
     return {rows1};
@@ -33,14 +33,24 @@ router.post('/sendOrder', async (req, res)=>{
     const sql3 = "SELECT * FROM shop_order WHERE order_sid = ?"  
     const [add] = await db.query(sql3, [req.body.order_sid]);
     res.json(add);
+    // const sql4 = "UPDATE orders SET deliver_sid = ?, deliver_order_sid = ?, deliver_order_status=1 WHERE sid = ?";   //還少deliver_order_sid 
+    const sql4 = "UPDATE orders SET deliver_sid = ?, deliver_order_status=1 WHERE sid = ?";
+    await db.query(sql4, 
+        [
+            req.body.deliver_sid, 
+                                        //還少deliver_order_sid 
+            req.body.deliver_sid, 
+        ]);
+    const sql5 = "UPDATE orders SET orders.deliver_order_sid = (SELECT deliver_order.sid FROM deliver_order WHERE orders.store_order_sid = deliver_order.store_order_sid)";
+    const [odsid] = await db.query(sql5);
 })
 /* ----------接單後訂單預覽------------- */
 router.get('/deliverorder/:id', async(req, res)=>{
-    const sql1 ="SELECT member.name,  shop.name AS shopname, shop.address, shop.phone, member.name, deliver_order.deliver_memo,  deliver_order.deliver_fee, deliver_order.order_sid FROM (deliver_order INNER JOIN shop ON deliver_order.shop_sid = shop.sid) INNER JOIN member ON deliver_order.member_sid = member.sid WHERE order_sid = ? AND deliver_order.order_finish = 0";
+    const sql1 ="SELECT orders.receive_address, member.name,  shop.name AS shopname, shop.address, shop.phone, member.name, deliver_order.deliver_memo,  deliver_order.deliver_fee, deliver_order.order_sid FROM ((deliver_order INNER JOIN shop ON deliver_order.shop_sid = shop.sid) INNER JOIN member ON deliver_order.member_sid = member.sid) INNER JOIN orders ON deliver_order.store_order_sid = orders.store_order_sid WHERE order_sid = ? AND deliver_order.order_finish = 0";
     const [rows] = await db.query(sql1, [req.params.id]);
     const sql2 ="SELECT products.name, order_detail.product_price, order_detail.amount FROM (order_detail INNER JOIN products ON order_detail.product_sid = products.sid ) WHERE order_detail.order_sid = ?";
     const [food] = await db.query(sql2, [req.params.id]);
-    const sql3 ="SELECT SUM(order_detail.product_price*order_detail.amount)AS total FROM `order_detail` WHERE order_sid =?"
+    const sql3 = "SELECT SUM(orders.sale+orders.deliver_fee)AS total FROM orders WHERE orders.sid = ? ";
     const [total] = await db.query(sql3, [req.params.id]);
     res.json({rows,food,total});;
 }) 
@@ -58,6 +68,8 @@ router.put('/deliverorder/:id', async(req, res)=>{
 router.put('/finishdeliverorder/:id', async(req, res)=>{
     const sql1 = "UPDATE deliver_order SET `complete_time`=NOW(), `order_finish`=1 WHERE order_sid=?";
     await db.query(sql1, [req.params.id]);
+    const sql2 = "UPDATE orders SET paid = 1, order_complete = 1 WHERE sid = ?";
+    await db.query(sql2, [req.params.id]);
 })
 /* ---------------------------------- */
 /* --------------過往紀錄------------- */
