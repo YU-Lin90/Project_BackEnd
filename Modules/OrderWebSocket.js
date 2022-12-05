@@ -144,9 +144,11 @@ const OrderWebSocket = (server) => {
     });
     ws.on("close", () => {
       console.log("----聊天室離線----");
-      console.log("sid:" + map.get(ws).sid);
-      console.log("side:" + map.get(ws).side);
-      delete referenceList[map.get(ws).side][map.get(ws).sid];
+      // console.log("sid:" + map.get(ws).sid);
+      // console.log("side:" + map.get(ws).side);
+      if(referenceList[map.get(ws)]){
+        delete referenceList[map.get(ws).side][map.get(ws).sid];
+      }
     });
   });
 };
