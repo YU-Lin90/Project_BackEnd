@@ -306,6 +306,7 @@ app.use(
 );
 //店家列表
 app.use("/Shopping/", require("./Api/Shopping/Shopping"));
+app.use("/StoreSellAnalyze/", require("./Api/Store/StoreSellAnalyze"));
 
 //店家訂單(資料)
 app.use(
