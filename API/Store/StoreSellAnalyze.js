@@ -2,24 +2,26 @@ const express = require("express");
 const router = express.Router();
 const DB = require("../../Modules/ConnectDataBase");
 const moment = require("moment-timezone");
+function changeTime(oldTime, form) {
+  return moment(oldTime).tz("Asia/Taipei").format(form);
+}
 
-router.use("/", async (req, res, next) => {
+router.use("/:sid", async (req, res, next) => {
+  let sid = req.params.sid;
 
-  // let storeSid = req.token.sid;
+  // 測試用
+  // let storeSid = 89;
 
-// 測試用
-  let storeSid = 89;
-  let output = {};
 
-  let sql =
-    "SELECT o.sid , o.`order_total` FROM `orders` o WHERE o.`shop_sid` = 89 ORDER BY o.sid DESC";
+  let sql = `SELECT order_total , order_time FROM orders  WHERE shop_sid = ${sid} ORDER BY sid DESC`;
 
-  let [result] = await DB.query(sql, storeSid);
+  let [result] = await DB.query(sql);
 
-  output.result = result;
+  result.forEach((el)=>{
+    el.order_time =  changeTime(el.order_time, 'YYYY/MM/DD HH:mm')
+  })
+
   res.json(result);
-  console.log("get");
-
 });
 
 module.exports = router;
