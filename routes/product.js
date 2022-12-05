@@ -3,11 +3,111 @@ const router = express.Router();
 const db = require("../modules/db_connect");
 const upload = require("../modules/upload-img");
 
+// 如果傳進來的sid不為零，找到該商品資料並且回傳
+router.get("/edit-form", upload.single(), async (req, res) => {
+  const { sid } = req.query;
+
+  const data = {
+    shop: {},
+    types: {},
+    product: {},
+    options_types: {},
+    options: {},
+    only_options_types: {},
+  };
+  const shop_sql =
+    "SELECT s.* FROM `shop` s LEFT JOIN `products` p ON p.shop_sid=s.sid WHERE p.sid=?";
+  const [[shop_rows]] = await db.query(shop_sql, [sid]);
+
+  const type_sql = "SELECT * FROM products_types WHERE shop_sid=?";
+  const [type_rows] = await db.query(type_sql, [shop_rows.sid]);
+
+  const product_sql = "SELECT * FROM `products` WHERE sid=?";
+  const [[product_rows]] = await db.query(product_sql, [sid]);
+
+  const option_type_sql =
+    "SELECT ot.*, otpr.product_sid FROM `options_types` ot LEFT JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid LEFT JOIN `products` p ON otpr.product_sid=p.sid WHERE p.sid=?";
+  const [option_type_rows] = await db.query(option_type_sql, [sid]);
+
+  // const option_sql =
+  //   "SELECT o.*, ot.shop_sid FROM `options` o LEFT JOIN `options_types` ot ON o.options_type_sid=ot.sid LEFT JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid LEFT JOIN `products` p ON otpr.product_sid=p.sid WHERE p.sid=?";
+  // const [option_rows] = await db.query(option_sql, [sid]);
+  const option_sql =
+    "SELECT o.*, ot.shop_sid FROM `options` o LEFT JOIN `options_types` ot ON o.options_type_sid=ot.sid WHERE ot.shop_sid=?";
+  const [option_rows] = await db.query(option_sql, [shop_rows.sid]);
+
+  const only_option_type_sql =
+    "SELECT * FROM `options_types` WHERE `shop_sid`=?";
+  const [only_option_type_rows] = await db.query(only_option_type_sql, [
+    shop_rows.sid,
+  ]);
+
+  data.shop = shop_rows;
+  data.types = type_rows;
+  data.product = product_rows;
+  data.options_types = option_type_rows;
+  data.options = option_rows;
+  data.only_options_types = only_option_type_rows;
+
+  console.log(data);
+  res.json(data);
+});
+
+// 如果回傳為零，代表要新增資料，只需要回傳這個餐廳的選項類別和選項回去
+router.get("/add-form", upload.single(), async (req, res) => {
+  const { shop_sid } = req.query;
+
+  const data = {
+    shop: {},
+    types: {},
+    product: {},
+    options_types: {},
+    options: {},
+    only_options_types: {},
+  };
+  const shop_sql = "SELECT s.* FROM `shop` s WHERE s.sid=?";
+  const [[shop_rows]] = await db.query(shop_sql, [shop_sid]);
+
+  const type_sql = "SELECT * FROM products_types WHERE shop_sid=?";
+  const [type_rows] = await db.query(type_sql, [shop_sid]);
+
+  // const product_sql = "SELECT * FROM `products` WHERE sid=?";
+  // const [[product_rows]] = await db.query(product_sql, [sid]);
+
+  // const option_type_sql =
+  //   "SELECT ot.*, otpr.product_sid FROM `options_types` ot LEFT JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid LEFT JOIN `products` p ON otpr.product_sid=p.sid WHERE p.sid=?";
+  // const [option_type_rows] = await db.query(option_type_sql, [sid]);
+
+  // const option_sql =
+  //   "SELECT o.*, ot.shop_sid FROM `options` o LEFT JOIN `options_types` ot ON o.options_type_sid=ot.sid LEFT JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid LEFT JOIN `products` p ON otpr.product_sid=p.sid WHERE p.sid=?";
+  // const [option_rows] = await db.query(option_sql, [sid]);
+  const option_sql =
+    "SELECT o.*, ot.shop_sid FROM `options` o LEFT JOIN `options_types` ot ON o.options_type_sid=ot.sid WHERE ot.shop_sid=?";
+  const [option_rows] = await db.query(option_sql, [shop_sid]);
+
+  const only_option_type_sql =
+    "SELECT * FROM `options_types` WHERE `shop_sid`=?";
+  const [only_option_type_rows] = await db.query(only_option_type_sql, [
+    shop_sid,
+  ]);
+
+  data.shop = shop_rows;
+  data.types = type_rows;
+  // data.product = product_rows;
+  // data.options_types = option_type_rows;
+  data.options = option_rows;
+  data.only_options_types = only_option_type_rows;
+
+  console.log(data);
+  res.json(data);
+});
+
 router.get("/:shop_sid", async (req, res) => {
   const data = {
     types: {},
     products: {},
     options_types: {},
+    only_options_types: {},
   };
   const { shop_sid } = req.params;
 
@@ -32,7 +132,12 @@ router.get("/:shop_sid", async (req, res) => {
     shop_sid,
   ]);
 
+  const option_sql =
+    "SELECT o.*, ot.shop_sid FROM `options` o LEFT JOIN `options_types` ot ON o.options_type_sid=ot.sid WHERE ot.shop_sid=?";
+  const [option_rows] = await db.query(option_sql, [shop_sid]);
+
   data.types = type_rows;
+  data.options = option_rows;
   data.products = product_rows;
   data.options_types = option_type_rows;
   data.only_options_types = only_option_type_rows;
@@ -94,6 +199,7 @@ router.post("/:shop_sid", upload.single("avatar"), async (req, res) => {
       console.log(product_option_result);
     }
   }
+  res.json(output);
 });
 
 // 修改一筆資料，params傳入的值是要修改的product_sid
@@ -113,10 +219,8 @@ router.put("/:shop_sid", upload.single("avatar"), async (req, res) => {
   // 找到上傳圖片的路徑名稱(檔名)，當作資料表中的src
   const src = req.file ? req.file.filename : "";
   available = available ? 1 : 0;
-  // discount = discount.trim() ? Number(discount) : Number(price);
   discount = price;
   options_types = options_types ? options_types : [];
-  console.log(discount);
 
   try {
     // 如果有上傳新的圖片，就取代原有的src
@@ -161,11 +265,11 @@ router.put("/:shop_sid", upload.single("avatar"), async (req, res) => {
         sid,
         options_types[i],
       ]);
-      console.log(`insert_relation_result-${i} : `, insert_relation_result);
+      // console.log(`insert_relation_result-${i} : `, insert_relation_result);
     }
 
-    console.log("result : ", result);
-    console.log("delete_relation_result : ", delete_relation_result);
+    // console.log("result : ", result);
+    // console.log("delete_relation_result : ", delete_relation_result);
     // if (result.affectedRows && delete_relation_result.affectedRows) {
     //   output.success = true;
     // }
@@ -187,5 +291,53 @@ router.delete("/:sid", upload.none(), async (req, res) => {
   res.json(result);
   console.log(result);
 });
+
+// router.get("/edit-form", upload.none(), async (req, res) => {
+//   console.log(123);
+//   const { sid } = req.query;
+
+//   const data = {
+//     shop: {},
+//     types: {},
+//     product: {},
+//     options_types: {},
+//     options: {},
+//     only_options_types: {},
+//   };
+
+//   const shop_sql =
+//     "SELECT s.* FROM `shop` s LEFT JOIN `products` p ON p.shop_sid=s.sid WHERE p.sid=?";
+//   const [[shop_rows]] = await db.query(shop_sql, [sid]);
+
+//   const type_sql = "SELECT * FROM products_types WHERE shop_sid=?";
+//   const [type_rows] = await db.query(type_sql, [shop_sid]);
+
+//   const product_sql = "SELECT * FROM `products` WHERE sid=?";
+//   const [[product_rows]] = await db.query(product_sql, [sid]);
+
+//   const option_type_sql =
+//     "SELECT ot.*, otpr.product_sid FROM `options_types` ot LEFT JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid LEFT JOIN `products` p ON otpr.product_sid=p.sid WHERE p.sid=?";
+//   const [option_type_rows] = await db.query(option_type_sql, [sid]);
+
+//   const option_sql =
+//     "SELECT o.*, ot.shop_sid FROM `options` o LEFT JOIN `options_types` ot ON o.options_type_sid=ot.sid LEFT JOIN `options_types_products_relation` otpr ON ot.sid=otpr.options_type_sid LEFT JOIN `products` p ON otpr.product_sid=p.sid WHERE p.sid=?";
+//   const [option_rows] = await db.query(option_sql, [sid]);
+
+//   const only_option_type_sql =
+//     "SELECT * FROM `options_types` WHERE `shop_sid`=?";
+//   const [only_option_type_rows] = await db.query(only_option_type_sql, [
+//     shop_rows.sid,
+//   ]);
+
+//   data.shop = shop_rows;
+//   data.types = type_rows;
+//   data.product = product_rows;
+//   data.options_types = option_type_rows;
+//   data.options = option_rows;
+//   data.only_options_types = only_option_type_rows;
+
+//   console.log(data);
+//   res.json(data);
+// });
 
 module.exports = router;
