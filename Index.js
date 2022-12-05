@@ -257,6 +257,13 @@ app.use('/MemberMapDetails',memberTokenLoginCheck,require('./API/Member/Member_M
 
 //會員 每日優惠券(動作)
 app.use('/DailyCoupon',memberTokenLoginCheck,require('./API/Member/Member_DailyCoupon'))
+
+//刪除每日優惠券資料(刪除假資料)
+app.get('/deleteAllDailyCoupon',async(req,res)=>{
+  const sql = "DELETE FROM `daily_coupon` WHERE 1"
+  await DB.query(sql)
+  res.json(1)
+})
 //===============================================分隔線================================================
 //錚
 //會員紅利點數(資料)
