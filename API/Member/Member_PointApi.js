@@ -39,12 +39,14 @@ router.use("/", async (req, res) => {
     const {sid} = parsedToken;
 
   let memberSid = sid;
+  
 
   let sql =
     "SELECT p.*,cc.`coupon_name`,m.`point` FROM `point_detail` p LEFT JOIN `coupon_content` cc ON p.`coupon_sid` = cc.`sid` LEFT JOIN `member` m ON p.`member_sid` = m.`sid` WHERE  `member_sid`= ? ";
 
+
   let [getData] = await DB.query(sql, memberSid);
-  // console.log(getData);
+
   //轉換時間格式
   getData.forEach((element) => {
     const time = element.point_change_time;

@@ -416,6 +416,13 @@ router.delete('/del2/:sid', async (req, res) => {
     res.json({ success: !!result.affectedRows, result });
 });
 
+router.get('/api6', async (req, res) => {
+
+    const sql = "SELECT * FROM member ORDER BY sid DESC LIMIT 0 , 1";
+    const [result] = await db.query(sql);
+    console.log(result);
+    res.json(result);
+});
 
 
 module.exports = router;
