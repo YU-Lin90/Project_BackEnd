@@ -27,6 +27,8 @@ router.use("/", async (req, res, next) => {
   let wait_time = req.query.wait_time ? Number(req.query.wait_time.trim()) : 0;
   //是否有排序方式
   let order = req.query.order
+  //是否為城市搜尋
+  let area = req.query.area ? req.query.area : "" ;
 
 
   //預設搜尋來源為店家
@@ -46,6 +48,10 @@ router.use("/", async (req, res, next) => {
   let food_join = ` left join food_type on shop.food_type_sid = food_type.sid `
   //SQL搜尋後
   //SELECT shop.*  , products.sid AS products_sid , products.name AS products_name , products.price FROM `shop` left Join products on shop.sid = products.shop_sid
+
+  //SQL僅搜尋台北/臺北
+  //SELECT shop.* , COUNT(*) AS products_count ,COUNT(*) OVER() AS total_rows , products.sid AS products_sid , products.name AS products_name , products.price , food_type.type_name  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 left join food_type on shop.food_type_sid = food_type.sid WHERE shop.sid <> 101 AND shop.`address` LIKE '%台北%' OR shop.`address` LIKE '%臺北%' GROUP BY shop.sid ORDER BY average_evaluation DESC 
+
 
   //SQL僅搜尋商品
   //SELECT shop.*  , products.sid AS products_sid , products.name AS products_name , products.price FROM `products` inner Join shop on shop.sid = products.shop_sid AND products.price < 100
@@ -149,6 +155,13 @@ router.use("/", async (req, res, next) => {
     //要資料
     let [result] = await DB.query(sql_search);
     output.result = result;
+    res.json(result);
+  }
+
+  if (area){
+    sql_search = ` SELECT shop.* , COUNT(*) AS products_count ,COUNT(*) OVER() AS total_rows , products.sid AS products_sid , products.name AS products_name , products.price , food_type.type_name  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 left join food_type on shop.food_type_sid = food_type.sid WHERE shop.sid <> 101 AND shop.\`address\` LIKE '%台北%' OR shop.\`address\` LIKE '%臺北%' GROUP BY shop.sid ORDER BY average_evaluation DESC `
+    let [result] = await DB.query(sql_search)
+    output.result = result
     res.json(result);
   }
 });
