@@ -50,6 +50,7 @@ router.post("/:shop_sid", upload.none(), async (req, res) => {
     ]);
     console.log(option_result);
   }
+  res.send("OK");
 });
 
 router.put("/:shop_sid", async (req, res) => {
@@ -87,6 +88,7 @@ router.put("/:shop_sid", async (req, res) => {
     ]);
     console.log(insert_option_result);
   }
+  res.send("OK");
 });
 
 router.delete("/:sid", upload.none(), async (req, res) => {
@@ -101,6 +103,7 @@ router.delete("/:sid", upload.none(), async (req, res) => {
   const delete_option_sql = "DELETE FROM `options` WHERE options_type_sid=?";
   const [delete_option_result] = await db.query(delete_option_sql, [sid]);
   console.log(delete_option_result);
+  res.send("OK");
 });
 
 module.exports = router;
