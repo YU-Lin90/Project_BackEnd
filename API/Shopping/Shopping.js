@@ -158,12 +158,12 @@ router.use("/", async (req, res, next) => {
     res.json(result);
   }
 
-  if (area){
-    sql_search = ` SELECT shop.* , COUNT(*) AS products_count ,COUNT(*) OVER() AS total_rows , products.sid AS products_sid , products.name AS products_name , products.price , food_type.type_name  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 left join food_type on shop.food_type_sid = food_type.sid WHERE shop.sid <> 101 AND shop.\`address\` LIKE '%台北%' OR shop.\`address\` LIKE '%臺北%' GROUP BY shop.sid ORDER BY average_evaluation DESC `
-    let [result] = await DB.query(sql_search)
-    output.result = result
-    res.json(result);
-  }
+  // if (area){
+  //   sql_search = ` SELECT shop.* , COUNT(*) AS products_count ,COUNT(*) OVER() AS total_rows , products.sid AS products_sid , products.name AS products_name , products.price , food_type.type_name  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 left join food_type on shop.food_type_sid = food_type.sid WHERE shop.sid <> 101 AND shop.\`address\` LIKE '%台北%' OR shop.\`address\` LIKE '%臺北%' GROUP BY shop.sid ORDER BY average_evaluation DESC `
+  //   let [result] = await DB.query(sql_search)
+  //   output.result = result
+  //   res.json(result);
+  // }
 });
 
 module.exports = router;
