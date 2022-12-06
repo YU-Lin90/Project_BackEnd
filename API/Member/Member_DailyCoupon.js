@@ -114,18 +114,20 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
     dateString,
   ]);
   console.log(todayCounts); //直接就是數字 今天的次數
+  todayCounts = todayCounts || 0
   //折價金額 第一次30..
-  const cutamounts = [30, 20, 10];
+  const cutamounts = [60, 40, 20];
   //3次就超過了
   if (todayCounts === 3) {
     output.over = true;
     console.log("over3");
   } else {
-    //第三次加入
+    //第三次加入  換成指定的店家
     if (todayCounts === 2) {
       result.shift()
       result.unshift(showShopData);
     }
+    output.cutamount = cutamounts[todayCounts]
     const gettedShopSid = result[0].sid;
     const countIntoSql = todayCounts ? todayCounts : 0;
     //如果三次以下就寫入
@@ -143,6 +145,7 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
     console.log("notover");
   }
 
+  output.todayCounts= (todayCounts ||0 ) +1
   output.shopList = result;
   res.json(output);
 });

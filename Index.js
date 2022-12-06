@@ -267,6 +267,8 @@ app.get('/deleteAllDailyCoupon',async(req,res)=>{
   console.log("現在時間:" + new Date());
   res.json(1)
 })
+//隨機功能--未登入
+app.use('/RandomWithoutLogin',require('./API/Shopping/RandomWithoutLogin'))
 //===============================================分隔線================================================
 //錚
 //會員紅利點數(資料)
