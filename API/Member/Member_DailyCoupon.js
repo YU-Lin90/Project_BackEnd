@@ -30,9 +30,11 @@ router.get("/CheckTodayNotUse", async (req, res) => {
   const MM = new Date().getMonth() + 1;
   const DD = new Date().getDate();
   const dateString = YY + "-" + MM + "-" + DD;
-  const checkNotUseSql =
-    "SELECT  MIN(dc.`count`) count ,dc.sid,dc.`shop_sid`,s.`name`,dc.`member_sid`, dc.`expire`, dc.`cut_amount`, dc.`is_used` FROM `daily_coupon` dc  LEFT JOIN `shop` s  ON dc.`shop_sid`=s.`sid` WHERE `member_sid` = ? AND `is_used` =0 AND `expire` > NOW()";
-  let [[result]] = await DB.query(checkNotUseSql, [memberSid, dateString]);
+  // const checkNotUseSql =
+  //   "SELECT  MIN(dc.`count`) count ,dc.sid,dc.`shop_sid`,s.`name`,dc.`member_sid`, dc.`expire`, dc.`cut_amount`, dc.`is_used` FROM `daily_coupon` dc  LEFT JOIN `shop` s  ON dc.`shop_sid`=s.`sid` WHERE `member_sid` = ? AND `is_used` =0 AND `expire` > NOW()";
+    const checkNotUseSql =
+    "SELECT  dc.sid,dc.`shop_sid`,s.`name`,dc.`member_sid`, dc.`expire`, dc.`cut_amount`, dc.`is_used` FROM `daily_coupon` dc  LEFT JOIN `shop` s  ON dc.`shop_sid`=s.`sid` WHERE `member_sid` = ? AND `is_used` =0 AND `expire` > NOW()";
+  let [result] = await DB.query(checkNotUseSql, [memberSid, dateString]);
   // result.expire = changeTime(result.expire, 'YYYY/MM/DD HH:mm:ss')
   console.log(result);
   res.json(result);
@@ -45,7 +47,9 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   const rejectTypes = req.body;
   const memberSid = req.token.sid;
   let sqlSpilit = "";
+  //[1,2,3,4,5]
   //串接字串
+  //(foreach)    value  
   for (let element of rejectTypes) {
     const num = Number(element);
     // console.log(num);
@@ -94,7 +98,7 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   const forShowSql =
     "SELECT `sid`, `name`, `address`, `food_type_sid` FROM `shop` WHERE `sid` = ?";
   const [[showShopData]] = await DB.query(forShowSql, presentationSid);
-  console.log(showShopData);
+  // console.log(showShopData);
   // result.unshift(showShopData)
   //===============================================分隔線================================================
   // const gettedShopSid = result[0].sid
@@ -142,6 +146,15 @@ router.post("/GetRandomStoreWithType", async (req, res) => {
   output.shopList = result;
   res.json(output);
 });
+
+
+router.get('/CheckDailyCouponWithShopSid',async(req,res)=>{
+  const memberSid = req.token.sid
+  const shopSid = req.query.shopSid
+  const sql ="SELECT `sid`, `member_sid`, `shop_sid`, `expire`, `cut_amount`, `is_used`, `get_date`, `count`, `use_time` FROM `daily_coupon` WHERE `member_sid` = ? AND `shop_sid` = ? AND `is_used`=0 AND  `expire` > NOW()"
+  const [[result]] = await DB.query(sql,[memberSid,shopSid])
+  res.json(result)
+})
 
 /*1	美式
 2	日式

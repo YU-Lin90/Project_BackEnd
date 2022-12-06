@@ -262,6 +262,9 @@ app.use('/DailyCoupon',memberTokenLoginCheck,require('./API/Member/Member_DailyC
 app.get('/deleteAllDailyCoupon',async(req,res)=>{
   const sql = "DELETE FROM `daily_coupon` WHERE 1"
   await DB.query(sql)
+  console.log('--------------------');
+  console.log('刪除每日優惠券資料');
+  console.log("現在時間:" + new Date());
   res.json(1)
 })
 //===============================================分隔線================================================
