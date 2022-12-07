@@ -27,20 +27,38 @@ const directionND = ['','']
 const drList = [directionNS,directionWE,directionND]
 
 const ams = ['炸雞','漢堡','牛排','美式餐廳']
+const amsImg = ['amF','amH','amS','amR']
 const jps = ['壽司','拉麵','丼','日本料理']
+const jpsImg = ['jpS','jpN','jpD','jpR']
 const chs = ['麵店','小吃店','便當','豆漿店']
+const chsImg = ['chN','chR','chB','chS']
 const its = ['義大利麵','義式廚房',' PASTA','比薩']
+const itsImg =['italyN','italyR','italyN','italyP']
 const dks = ['咖啡','冷飲','果汁吧','鮮茶']
-const dss = ['蛋糕','豆花','刨冰','甜點坊']
+const dksImg = ['dkC','dkD','dkF','dkT']
+const dss = ['蛋糕','豆花','冰品','甜點坊']
+const dssImg = ['dsC','dsB','dsI','dsR']
 const types = [0,ams,jps,chs,its,dks,dss]
 const nameList = ['好吃','平價','好再來','老饕','隨意','源味','優質','好饗','饗餚','餚享','家鄉','佳好','德新']//13個
 
+const imgList = [0,amsImg,jpsImg,chsImg,itsImg,dksImg,dssImg]
+
+
+router.get('/updateOld100',async(req,res)=>{
+  for (let i = 0 ;i<100;i++){
+    const sql = "UPDATE `shop` SET `src`=? WHERE `sid` = ?"
+    const srcName = 'store' + i + '.jpg'
+    await DB.query(sql,[srcName,i])
+  }
+  res.json(1)
+})
 
 
 router.get("/SetNewFakeShop", async (req, res) => {
   for (let i = 0 ;i<100;i++){
     const foodType = getIntTo1(6)
-    const shopName = nameList[getIntTo0(12)] + types[foodType][getIntTo0(3)]
+    const shopNameIndex = getIntTo0(3)
+    const shopName = nameList[getIntTo0(12)] + types[foodType][shopNameIndex]
   
     const phone = ('09' + getIntTo0(99999999) +'0123456789').slice(0,10)
     const email = 'S' + phone
@@ -52,7 +70,7 @@ router.get("/SetNewFakeShop", async (req, res) => {
   
     const bus_start = 0830
     const bus_end = 1730
-    const src = 'storeCover' + getIntTo1(100)
+    const src = imgList[foodType][shopNameIndex] + getIntTo1(8) + '.jpg'
     const waitTime = getIntTo1(10) * 5
     const eva = getIntTo1(50) / 10
   
