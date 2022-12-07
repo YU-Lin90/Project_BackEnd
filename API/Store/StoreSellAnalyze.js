@@ -7,8 +7,9 @@ function changeTime(oldTime, form) {
 }
 
 router.use("/:sid", async (req, res, next) => {
+  
   let sid = req.params.sid;
-
+  console.log("銷售分析店家sid:" , sid)
   // 測試用
   // let storeSid = 89;
 
@@ -17,12 +18,19 @@ router.use("/:sid", async (req, res, next) => {
   // 長條圖(這個月到今天為止 title:XX月商品銷售量)
   // X:商品名 Y:數量
 
-  let sql = `SELECT order_total , order_time FROM orders  WHERE shop_sid = ${sid} ORDER BY sid DESC`;
+  //計算所有訂單加總
+  // let sql = `SELECT sum(order_total) AS order_total , order_time FROM orders WHERE shop_sid = ${sid} GROUP BY day(order_time) ORDER BY order_time `;
+
+  //可將輸出的訂單時間變為最近的小時 (ex 23:12 -> 23:00)
+  // let sql = `SELECT sum(order_total) AS order_total , DATE_ADD(DATE_FORMAT(order_time, "%Y-%m-%d %H:00:00"),INTERVAL IF(MINUTE(order_time) < 30, 0, 1) HOUR) AS order_time FROM orders WHERE shop_sid = 89 GROUP BY day(order_time) ORDER BY order_time `;
+
+  //單日銷售額
+  let sql = `SELECT sum(order_total) AS order_total , DATE_FORMAT(order_time - INTERVAL 30 DAY, "%Y-%m-%d") AS order_time FROM orders WHERE shop_sid = 89 GROUP BY day(order_time) ORDER BY order_time `;
 
   let [result] = await DB.query(sql);
 
   result.forEach((el)=>{
-    el.order_time =  changeTime(el.order_time, 'YYYY/MM/DD HH:mm')
+    el.order_time =  changeTime(el.order_time, 'YYYY/MM/DD')
   })
 
   res.json(result);
