@@ -36,12 +36,22 @@ const its = ['義大利麵','義式廚房',' PASTA','比薩']
 const itsImg =['italyN','italyR','italyN','italyP']
 const dks = ['咖啡','冷飲','果汁吧','鮮茶']
 const dksImg = ['dkC','dkD','dkF','dkT']
-const dss = ['蛋糕','豆花','刨冰','甜點坊']
+const dss = ['蛋糕','豆花','冰品','甜點坊']
 const dssImg = ['dsC','dsB','dsI','dsR']
 const types = [0,ams,jps,chs,its,dks,dss]
 const nameList = ['好吃','平價','好再來','老饕','隨意','源味','優質','好饗','饗餚','餚享','家鄉','佳好','德新']//13個
 
 const imgList = [0,amsImg,jpsImg,chsImg,itsImg,dksImg,dssImg]
+
+
+router.get('/updateOld100',async(req,res)=>{
+  for (let i = 0 ;i<100;i++){
+    const sql = "UPDATE `shop` SET `src`=? WHERE `sid` = ?"
+    const srcName = 'store' + i + '.jpg'
+    await DB.query(sql,[srcName,i])
+  }
+  res.json(1)
+})
 
 
 router.get("/SetNewFakeShop", async (req, res) => {
@@ -60,7 +70,7 @@ router.get("/SetNewFakeShop", async (req, res) => {
   
     const bus_start = 0830
     const bus_end = 1730
-    const src = imgList[foodType] + getIntTo1(8)
+    const src = imgList[foodType][shopNameIndex] + getIntTo1(8) + '.jpg'
     const waitTime = getIntTo1(10) * 5
     const eva = getIntTo1(50) / 10
   
