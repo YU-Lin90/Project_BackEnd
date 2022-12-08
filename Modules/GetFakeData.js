@@ -43,7 +43,7 @@ const nameList = ['好吃','平價','好再來','老饕','隨意','源味','優�
 
 const imgList = [0,amsImg,jpsImg,chsImg,itsImg,dksImg,dssImg]
 
-
+//Setfakedata/SetNewFakeShop
 router.get('/updateOld100',async(req,res)=>{
   for (let i = 0 ;i<100;i++){
     const sql = "UPDATE `shop` SET `src`=? WHERE `sid` = ?"
