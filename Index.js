@@ -375,6 +375,8 @@ app.use(
 //deliving/GetAddress?side=${side}&orderSid=${orderSid}
 app.use('/deliving',deliverTokenLoginCheck,require('./API/Deliver/DelivingDetails'))
 
+app.use('/deliverMessager',require('./API/Deliver/DeliverMessager'))
+
 
 //管理者
 //優惠券管理(資料)
