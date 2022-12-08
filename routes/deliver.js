@@ -53,11 +53,16 @@ router.post('/sendOrder', async (req, res)=>{
 router.get('/deliverorder/:id', async(req, res)=>{
     const sql1 ="SELECT orders.receive_address, member.name,  shop.name AS shopname, shop.address, shop.phone, member.name, deliver_order.deliver_memo,  deliver_order.deliver_fee, deliver_order.order_sid FROM ((deliver_order INNER JOIN shop ON deliver_order.shop_sid = shop.sid) INNER JOIN member ON deliver_order.member_sid = member.sid) INNER JOIN orders ON deliver_order.store_order_sid = orders.store_order_sid WHERE order_sid = ? AND deliver_order.order_finish = 0";
     const [rows] = await db.query(sql1, [req.params.id]);
-    const sql2 ="SELECT products.name, order_detail.product_price, order_detail.amount FROM (order_detail INNER JOIN products ON order_detail.product_sid = products.sid ) WHERE order_detail.order_sid = ?";
+    const sql2 ="SELECT order_detail.product_sid, products.name, order_detail.product_price, order_detail.amount FROM (order_detail INNER JOIN products ON order_detail.product_sid = products.sid ) WHERE order_detail.order_sid = ?";
     const [food] = await db.query(sql2, [req.params.id]);
     const sql3 = "SELECT SUM(orders.sale+orders.deliver_fee)AS total FROM orders WHERE orders.sid = ? ";
     const [total] = await db.query(sql3, [req.params.id]);
-    res.json({rows,food,total});;
+    for (element of food) {
+        const detailSql = "SELECT  `option_detail_sid`, `options`, `option_price` FROM `order_option` WHERE `order_sid`= ? AND `product_sid` = ? ";
+        const [detailData] = await db.query(detailSql, [req.params.id, element.product_sid]);
+        element.detail = detailData
+    }
+    res.json({rows,food,total});
 }) 
 /* ---------------------------------- */
 /* ----------接單後訂單取餐鈕----------- */
