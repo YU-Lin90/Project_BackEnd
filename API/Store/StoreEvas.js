@@ -29,7 +29,7 @@ router.get("/getAllList", async (req, res) => {
   const lowerPage = (pageNow - 1) * perPage
   const [result] = await DB.query(sql, [shopSid,lowerPage,perPage])
   result.forEach((v) => {
-    v.evaluation_time = changeTime(v.evaluation_time, 'YYYY/MM/DD HH:mm:ss')
+    v.evaluation_time = changeTime(v.evaluation_time, 'YY年MM月DD日')
   })
   res.json(result)
 })
