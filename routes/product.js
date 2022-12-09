@@ -145,6 +145,51 @@ router.get("/:shop_sid", async (req, res) => {
   res.json(data);
 });
 
+router.post("/demo-data", upload.none(), async (req, res) => {
+  const {
+    name,
+    price,
+    order,
+    type,
+    shop_sid,
+    src,
+    note,
+    available,
+    discount,
+    options_types,
+  } = req.body;
+
+  // 把這個商品的基本資料填入
+  const product_sql =
+    "INSERT INTO `products`( `name`, `price`, `product_order`, `products_type_sid`,`shop_sid`, `src`, `note`, `available`, `discount`) VALUES (?,?,?,?,?,?,?,?,?)";
+  const [product_result] = await db.query(product_sql, [
+    name,
+    price,
+    order,
+    type,
+    shop_sid,
+    src,
+    note,
+    available,
+    discount,
+  ]);
+
+  // 新增此新商品下可以選擇的客製化選項群組的資料表
+  const product_option_sql =
+    "INSERT INTO `options_types_products_relation`( `product_sid`, `options_type_sid`) VALUES (?,?)";
+  // 將一個一個的options_type跟新商品建立關係
+  if (options_types && options_types.length > 0) {
+    for (let i = 0; i < options_types.length; i++) {
+      const [product_option_result] = await db.query(product_option_sql, [
+        product_result.insertId,
+        options_types[i],
+      ]);
+      // console.log(product_option_result);
+    }
+  }
+  res.send("ok");
+});
+
 router.post("/:shop_sid", upload.single("avatar"), async (req, res) => {
   console.log("post");
   console.log(req.file);
