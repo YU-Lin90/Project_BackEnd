@@ -145,48 +145,278 @@ router.get("/:shop_sid", async (req, res) => {
   res.json(data);
 });
 
+// 快速填入
 router.post("/demo-data", upload.none(), async (req, res) => {
-  const {
-    name,
-    price,
-    order,
-    type,
-    shop_sid,
-    src,
-    note,
-    available,
-    discount,
-    options_types,
-  } = req.body;
+  // 資料sid從1201開始
+  const product_data = [
+    {
+      sid: 2001,
+      name: "檸檬蜜Q晶凍",
+      shop_sid: 41,
+      price: 65,
+      products_type_sid: 101,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 65,
+      note: "聯名【蜜蜂工坊】百花純蜜，酸甜清爽的蜂蜜檸檬，咕溜清爽綠茶凍，以及超Ｑ彈黃金Q角，口感一次大滿足！(總熱量(最高)443 Kcal 總糖量(最高)88g)【Ｌ】※蜂蜜甜度固定調整蔗糖、微/去冰限定",
+      src: "product101.jpg",
+    },
+    {
+      sid: 2002,
+      name: "蜜Q大麥拿鐵",
+      shop_sid: 41,
+      price: 75,
+      products_type_sid: 101,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 75,
+      note: "聯名【蜜蜂工坊】百花純蜜，濃郁炒焙大麥拿鐵融合醇香蜂蜜，搭配Ｑ彈黃金糖口味粉角！｜【L杯】總熱量(最高)458 Kcal·總糖量(最高)64g｜※無咖啡因 ※甜度固定僅添加蜂蜜",
+      src: "product102.jpg",
+    },
+    {
+      sid: 2003,
+      name: "蜜Q茉香拿鐵Honey Green Tea Latte with Golden Cube Jelly",
+      shop_sid: 41,
+      price: 75,
+      products_type_sid: 101,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 75,
+      note: "聯名【蜜蜂工坊】百花純蜜，搭配經典茉香綠茶拿鐵，還有Ｑ彈黃金糖口味粉角！｜總熱量(最高)447 Kcal·總糖量(最高)64g｜※甜度固定僅添加蜂蜜",
+      src: "product103.jpg",
+    },
+    {
+      sid: 2004,
+      name: "珍珠伯爵紅茶拿鐵 Black Tea Latte with bubble",
+      shop_sid: 41,
+      price: 60,
+      products_type_sid: 101,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 60,
+      note: "招牌飲品No.1！自家牧場鮮奶調配而成的鮮奶茶，搭配手工熬煮珍珠，軟Q彈牙｜總熱量(最高)426 Kcal、總糖量(最高)35g",
+      src: "product104.jpg",
+    },
+    {
+      sid: 2005,
+      name: "珍珠手炒黑糖鮮奶 Brown Sugar Fresh Milk with Bubble",
+      shop_sid: 41,
+      price: 90,
+      products_type_sid: 101,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 90,
+      note: "招牌飲品TOP 3！門市手工熬煮黑糖，清甜焦香不膩口，搭配手工熬煮珍珠，軟Q彈牙。｜※無咖啡因｜總熱量(最高)452 Kcal·總糖量(最高)40g",
+      src: "product105.jpg",
+    },
+    {
+      sid: 2006,
+      name: "仙草凍冬瓜茶 White Gourd Tea with Grass Jelly",
+      shop_sid: 41,
+      price: 45,
+      products_type_sid: 101,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 45,
+      note: "台灣古早味經典飲品搭配門市手工仙草凍，口感滑嫩 ｜※無咖啡因｜總熱量(最高)267 Kcal·總糖量(最高)63g",
+      src: "product106.jpg",
+    },
+    {
+      sid: 2007,
+      name: "珍珠焙香決明大麥 Barley Tea with Bubble",
+      shop_sid: 41,
+      price: 45,
+      products_type_sid: 101,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 45,
+      note: "搭配手工烹煮麥茶＋蜜漬香Ｑ珍珠｜※無咖啡因 ｜總熱量(最高)260 Kcal·總糖量(最高)29g",
+      src: "product107.jpg",
+    },
+    {
+      sid: 2008,
+      name: "蜂蜜麥茶拿鐵Honey Barley Tea Latte",
+      shop_sid: 41,
+      price: 60,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount:60 ,
+      note: "聯名【蜜蜂工坊】百花純蜜，炒焙大麥拿鐵融合蜂蜜，香氣厚實入口滑順！｜總熱量(最高)204 Kcal·總糖量(最高)31g｜※無咖啡因 ※甜度固定僅添加蜂蜜",
+      src: "product108.jpg",
+    },
+    {
+      sid: 2009,
+      name: "蜂蜜綠茶拿鐵Honey Green Tea Latte",
+      shop_sid: 41,
+      price: 60,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 60,
+      note: "聯名【蜜蜂工坊】百花純蜜，搭配經典茉香綠茶拿鐵，清新甘醇彷彿置身百花森林！｜總熱量(最高)220 Kcal·總糖量(最高)31g)※甜度固定僅添加蜂蜜",
+      src: "product109.jpg",
+    },
+    {
+      sid: 2010,
+      name: "伯爵可可拿鐵 Cocoa Earl Grey Black Tea Latte",
+      shop_sid: 41,
+      price: 55,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 55,
+      note: "法國頂級法芙娜100%純可可與帶有佛手柑香氣的伯爵拿鐵融合※可可粉無加糖，建議最低甜度一分甜。｜總熱量(最高)327 Kcal·總糖量(最高)44g",
+      src: "product110.jpg",
+    },
+    {
+      sid: 2011,
+      name: "布朗紅茶拿鐵 Brown Sugar Black Tea Latte",
+      shop_sid: 41,
+      price: 55,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 55,
+      note: "門市手炒黑糖特殊濃郁焦香搭配經典大正紅茶及綠光鮮奶調製鮮奶茶｜總熱量(最高)312 Kcal·總糖量(最高)47g",
+      src: "product111.jpg",
+    },
+    {
+      sid: 2012,
+      name: "伯爵紅茶拿鐵 Earl Grey Black Tea Latte",
+      shop_sid: 41,
+      price: 50,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 50,
+      note: "柑橘果香(佛手柑)的伯爵紅茶，風味較大正紅茶拿鐵更濃郁、香醇｜總熱量(最高)236 Kcal·總糖量(最高)34g",
+      src: "product112.jpg",
+    },
+    {
+      sid: 2013,
+      name: "大正紅茶拿鐵 Traditional Black Tea Latte",
+      shop_sid: 41,
+      price: 50,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 50,
+      note: "自家牧場綠光鮮奶ｘ古早味大正紅茶，風味輕盈滑順｜總熱量(最高)211 Kcal·總糖量(最高)34g",
+      src: "product113.jpg",
+    },
+    {
+      sid: 2014,
+      name: "茉香綠茶拿鐵 Green Tea Latte",
+      shop_sid: 41,
+      price: 45,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 45,
+      note: "使用茉香綠茶ｘ自家牧場綠光鮮奶，清新茉莉花香，滋味清爽順口｜總熱量(最高)219 Kcal·總糖量(最高)33g",
+      src: "product114.jpg",
+    },
+    {
+      sid: 2015,
+      name: "琥珀烏龍拿鐵 Oolong Tea Latte",
+      shop_sid: 41,
+      price: 45,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount:45 ,
+      note: "高峰烏龍茶(炭焙香)ｘ牧場綠光鮮奶，柔順、氣息層次豐富 ｜總熱量(最高)208 Kcal·總糖量(最高)31g",
+      src: "product115.jpg",
+    },
+    {
+      sid: 2016,
+      name: "原片青茶拿鐵 Light Oolong Latte",
+      shop_sid: 41,
+      price: 45,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount: 45,
+      note: "淡雅清香青茶ｘ牧場綠光鮮奶，甘甜醇滑｜總熱量(最高)228 Kcal·總糖量(最高)33g",
+      src: "product116.jpg",
+    },
+    {
+      sid: 2017,
+      name: "焙香大麥拿鐵 Barley Tea Latte",
+      shop_sid: 41,
+      price: 45,
+      products_type_sid: 102,
+      available: 1,
+      type: 0,
+      product_order: 1,
+      discount:45 ,
+      note: "手工烹煮麥茶ｘ牧場綠光鮮奶，麥香細緻醇滑｜※無咖啡因｜總熱量(最高)169 Kcal·總糖量(最高)25g",
+      src: "product117.jpg",
+    },
+  ];
 
   // 把這個商品的基本資料填入
-  const product_sql =
-    "INSERT INTO `products`( `name`, `price`, `product_order`, `products_type_sid`,`shop_sid`, `src`, `note`, `available`, `discount`) VALUES (?,?,?,?,?,?,?,?,?)";
-  const [product_result] = await db.query(product_sql, [
-    name,
-    price,
-    order,
-    type,
-    shop_sid,
-    src,
-    note,
-    available,
-    discount,
-  ]);
-
-  // 新增此新商品下可以選擇的客製化選項群組的資料表
-  const product_option_sql =
-    "INSERT INTO `options_types_products_relation`( `product_sid`, `options_type_sid`) VALUES (?,?)";
-  // 將一個一個的options_type跟新商品建立關係
-  if (options_types && options_types.length > 0) {
-    for (let i = 0; i < options_types.length; i++) {
-      const [product_option_result] = await db.query(product_option_sql, [
-        product_result.insertId,
-        options_types[i],
-      ]);
-      // console.log(product_option_result);
-    }
+  for (let i = 0; i < product_data.length; i++) {
+    const {
+      sid,
+      name,
+      shop_sid,
+      price,
+      products_type_sid,
+      available,
+      type,
+      product_order,
+      discount,
+      note,
+      src,
+    } = product_data[i];
+    const product_sql =
+      "INSERT INTO `products`(`sid`, `name`, `shop_sid`, `price`, `products_type_sid`, `available`, `type`, `product_order`, `discount`, `note`, `src`) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+    const [product_result] = await db.query(product_sql, [
+      sid,
+      name,
+      shop_sid,
+      price,
+      products_type_sid,
+      available,
+      type,
+      product_order,
+      discount,
+      note,
+      src,
+    ]);
   }
+
+  // // 新增此新商品下可以選擇的客製化選項群組的資料表
+  // const product_option_sql =
+  //   "INSERT INTO `options_types_products_relation`( `product_sid`, `options_type_sid`) VALUES (?,?)";
+  // // 將一個一個的options_type跟新商品建立關係
+  // if (options_types && options_types.length > 0) {
+  //   for (let i = 0; i < options_types.length; i++) {
+  //     const [product_option_result] = await db.query(product_option_sql, [
+  //       product_result.insertId,
+  //       options_types[i],
+  //     ]);
+  //     // console.log(product_option_result);
+  //   }
+  // }
   res.send("ok");
 });
 
