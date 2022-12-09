@@ -249,7 +249,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       available: 1,
       type: 0,
       product_order: 1,
-      discount:60 ,
+      discount: 60,
       note: "聯名【蜜蜂工坊】百花純蜜，炒焙大麥拿鐵融合蜂蜜，香氣厚實入口滑順！｜總熱量(最高)204 Kcal·總糖量(最高)31g｜※無咖啡因 ※甜度固定僅添加蜂蜜",
       src: "product108.jpg",
     },
@@ -340,7 +340,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       available: 1,
       type: 0,
       product_order: 1,
-      discount:45 ,
+      discount: 45,
       note: "高峰烏龍茶(炭焙香)ｘ牧場綠光鮮奶，柔順、氣息層次豐富 ｜總熱量(最高)208 Kcal·總糖量(最高)31g",
       src: "product115.jpg",
     },
@@ -366,7 +366,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       available: 1,
       type: 0,
       product_order: 1,
-      discount:45 ,
+      discount: 45,
       note: "手工烹煮麥茶ｘ牧場綠光鮮奶，麥香細緻醇滑｜※無咖啡因｜總熱量(最高)169 Kcal·總糖量(最高)25g",
       src: "product117.jpg",
     },
@@ -557,6 +557,15 @@ router.put("/:shop_sid", upload.single("avatar"), async (req, res) => {
 
   res.json(output);
   console.log(output);
+});
+
+// 刪除快速填入product
+router.delete("/demo-data", upload.none(), async (req, res) => {
+  for (let i = 2001; i <= 2020; i++) {
+    const sql = "DELETE FROM `products` WHERE sid=?";
+    const [result] = await db.query(sql, [i]);
+  }
+  res.send("OK")
 });
 
 router.delete("/:sid", upload.none(), async (req, res) => {
