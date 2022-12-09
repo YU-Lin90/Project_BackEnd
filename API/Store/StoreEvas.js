@@ -22,7 +22,8 @@ router.get("/getAllList", async (req, res) => {
   const shopSid = req.query.shopSid
   const pageNow = req.query.getPage
   const perPage = 24
-  const sql = "SELECT m.`name`,se.`sid`, se.`order_sid`, se.`member_sid`, se. `evaluation_score`, se.`evaluation_content`, se.`evaluation_time`   FROM `shop_evaluation` se LEFT JOIN `member` m ON se.`member_sid` = m.`sid`  WHERE  se.`shop_sid` =?  ORDER BY se.`evaluation_content` DESC LIMIT ?,?"
+  const sql = "SELECT m.`name`,se.`sid`, se.`order_sid`, se.`member_sid`, se. `evaluation_score`, se.`evaluation_content`, se.`evaluation_time`   FROM `shop_evaluation` se LEFT JOIN `member` m ON se.`member_sid` = m.`sid`  WHERE  se.`shop_sid` =?  ORDER BY se.`evaluation_time` DESC LIMIT ?,?"
+  // const sql = "SELECT m.`name`,se.`sid`, se.`order_sid`, se.`member_sid`, se. `evaluation_score`, se.`evaluation_content`, se.`evaluation_time`   FROM `shop_evaluation` se LEFT JOIN `member` m ON se.`member_sid` = m.`sid`  WHERE  se.`shop_sid` =?  ORDER BY se.`sid`  LIMIT ?,?"
 
   //${(queryPage - 1) * perPage}, ${perPage}
   const lowerPage = (pageNow - 1) * perPage
