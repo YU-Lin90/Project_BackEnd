@@ -84,15 +84,20 @@ router.put('/finishdeliverorder/:id', async(req, res)=>{
 /* ---------------------------------- */
 /* --------------過往紀錄------------- */
 router.get('/dataslist/:id', async(req, res)=>{
-    const sql = "SELECT deliver_order.order_sid, shop.name AS shopname, shop.address, deliver_fee, member.name, deliver_order.deliver_check_time, deliver_order.deliver_take_time, deliver_order.complete_time FROM( deliver_order INNER JOIN member ON deliver_order.member_sid = member.sid) INNER JOIN shop ON deliver_order.shop_sid = shop.sid WHERE deliver_order.order_finish = 1 AND deliver_order.deliver_sid = ?";
+    const sql = "SELECT deliver_order.order_sid, deliver_order.order_sid, shop.name AS shopname, shop.address, deliver_fee, member.name, deliver_order.deliver_check_time, deliver_order.deliver_take_time, deliver_order.complete_time FROM( deliver_order INNER JOIN member ON deliver_order.member_sid = member.sid) INNER JOIN shop ON deliver_order.shop_sid = shop.sid WHERE deliver_order.order_finish = 1 AND deliver_order.deliver_sid = ?";
     const [listrow] = await db.query(sql,[req.params.id]);
     res.json(listrow);
 })
 /* ---------------------------------- */
 /* -----------過往紀錄菜單------------- */
 router.get('/foodmeun/:id', async(req, res)=>{
-    const sql ="SELECT products.name, products.price, order_detail.amount FROM (order_detail INNER JOIN products ON order_detail.product_sid = products.sid ) WHERE order_detail.order_sid = ?";
+    const sql ="SELECT order_detail.product_sid, products.name, products.price, order_detail.amount FROM (order_detail INNER JOIN products ON order_detail.product_sid = products.sid ) WHERE order_detail.order_sid = ?";
     const [food] = await db.query(sql, [req.params.id]);
+    for (element of food) {
+        const detailSql = "SELECT  `option_detail_sid`, `options`, `option_price` FROM `order_option` WHERE `order_sid`= ? AND `product_sid` = ? ";
+        const [detailData] = await db.query(detailSql, [req.params.id, element.product_sid]);
+        element.detail = detailData
+    }
     res.json(food);
 })
 /* ---------------------------------- */
