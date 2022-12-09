@@ -339,6 +339,10 @@ app.use(
   require("./API/Store/ConfirmOrder")
 );
 
+//店家評價列表
+app.use('/GetStoreEvas',require('./API/Store/StoreEvas'))
+
+
 //獲得正整數範圍，有含上限(最小值,最大值)
 function getIntRange(min, max) {
   return Math.floor(Math.random() * (max + 1 - min) + min);
