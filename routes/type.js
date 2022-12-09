@@ -45,7 +45,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
 router.post("/:shop_sid", upload.none(), async (req, res) => {
   const { shop_sid } = req.params;
   const { type_name } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
 
   const output = {
     success: false,
@@ -54,10 +54,11 @@ router.post("/:shop_sid", upload.none(), async (req, res) => {
 
   try {
     // 找到目前最高的type_order是多少，並+1
-    const sql_order =
+    const order_sql =
       "SELECT type_order FROM `products_types` WHERE shop_sid=? ORDER BY type_order DESC LIMIT 1";
-    const [[{ type_order: getOrder }]] = await db.query(sql_order, [shop_sid]);
-    const order = Number(getOrder) + 1;
+    const [[order_rows]] = await db.query(order_sql, [shop_sid]);
+    console.log(order_rows);
+    const order = order_rows ? Number(order_rows.type_order) : 1;
 
     // 計算目前order排到第幾個
     // const sql_order =
@@ -76,7 +77,7 @@ router.post("/:shop_sid", upload.none(), async (req, res) => {
   } catch (e) {
     output.error = e;
   }
-
+  console.log(output);
   res.json(output);
 });
 
