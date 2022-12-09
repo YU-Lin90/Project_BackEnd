@@ -9,6 +9,7 @@ function changeTime(oldTime, form) {
 router.use("/:sid", async (req, res, next) => {
   
   let sid = req.params.sid;
+
   console.log("銷售分析店家sid:" , sid)
   // 測試用
   // let storeSid = 89;
@@ -28,7 +29,7 @@ router.use("/:sid", async (req, res, next) => {
   // let sql = `SELECT sum(order_total) AS order_total , DATE_FORMAT(order_time - INTERVAL 30 DAY, "%Y-%m-%d") AS order_time FROM orders_test WHERE shop_sid = ${sid} GROUP BY day(order_time) ORDER BY order_time `;
   
   //單日銷售額
-  let sql = `SELECT sum(order_total) AS order_total , DATE_FORMAT(order_time, "%Y-%m-%d") AS order_time FROM orders_test WHERE shop_sid = ${sid} GROUP BY day(order_time) ORDER BY order_time `;
+  let sql = `SELECT sum(order_total) AS order_total , DATE_FORMAT(order_time, "%Y-%m-%d") AS order_time FROM orders_test WHERE shop_sid = 89 GROUP BY day(order_time) ORDER BY order_time `;
 
   let [result] = await DB.query(sql);
 

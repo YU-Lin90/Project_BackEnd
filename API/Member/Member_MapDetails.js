@@ -5,6 +5,15 @@ const moment = require("moment-timezone");
 function changeTime(oldTime, form) {
   return moment(oldTime).tz("Asia/Taipei").format(form);
 }
+
+router.get('/GetDeliverName',async(req,res)=>{
+  const orderSid = req.query.orderSid
+  const memberSid = req.token.sid
+  const sql = "SELECT d.`name` FROM `orders` o LEFT JOIN `deliver` d ON d.`sid` = o.`deliver_sid` WHERE o.`sid` = ? AND o.`member_sid` = ?"
+  const [[result]] = await DB.query(sql,[orderSid,memberSid])
+  res.json(result)
+})
+
 router.get('/GetDeliverSid',async(req,res)=>{
   const orderSid = req.query.orderSid
   const memberSid = req.token.sid

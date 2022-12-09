@@ -155,7 +155,14 @@ router.get('/CheckDailyCouponWithShopSid',async(req,res)=>{
   const memberSid = req.token.sid
   const shopSid = req.query.shopSid
   const sql ="SELECT `sid`, `member_sid`, `shop_sid`, `expire`, `cut_amount`, `is_used`, `get_date`, `count`, `use_time` FROM `daily_coupon` WHERE `member_sid` = ? AND `shop_sid` = ? AND `is_used`=0 AND  `expire` > NOW()"
+  const shopNameSql = "SELECT name FROM `shop` WHERE `sid` = ?"
+  const [[shopResult]] = await DB.query(shopNameSql,shopSid)
+  console.log(shopResult);
+
   const [[result]] = await DB.query(sql,[memberSid,shopSid])
+  if(shopResult.name.length&&result ){
+    result.shopName = shopResult.name
+  }
   res.json(result)
 })
 
