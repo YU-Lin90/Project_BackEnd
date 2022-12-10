@@ -338,6 +338,26 @@ router.put("/:shop_sid", async (req, res) => {
   res.send("OK");
 });
 
+router.delete("/demo-data", upload.none(), async (req, res) => {
+  for (let i = 101; i <= 106; i++) {
+    const delete_option_type_sql = "DELETE FROM `options_types` WHERE sid=?";
+    const [option_type_result] = await db.query(delete_option_type_sql, [i]);
+  }
+
+  for (let i = 101; i <= 122; i++) {
+    const delete_option_sql = "DELETE FROM `options` WHERE sid=?";
+    const [delete_option_result] = await db.query(delete_option_sql, [i]);
+  }
+
+  for (let i = 201; i <= 204; i++) {
+    const delete_otpr_sql =
+      "DELETE FROM `options_types_products_relation` WHERE sid=?";
+    const [delete_otpr_result] = await db.query(delete_otpr_sql, [i]);
+  }
+
+  res.send("ok");
+});
+
 router.delete("/:sid", upload.none(), async (req, res) => {
   const { sid } = req.params;
 

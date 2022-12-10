@@ -115,6 +115,15 @@ router.put("/:sid", upload.none(), async (req, res) => {
   res.json(output);
 });
 
+// 刪除快速填入的類別
+router.delete("/demo-data", upload.none(), async (req, res) => {
+  for (let i = 101; i <= 105; i++) {
+    const sql = "DELETE FROM `products_types` WHERE sid=?";
+    const result = await db.query(sql, [i]);
+  }
+  res.send("OK");
+});
+
 router.delete("/:sid", async (req, res) => {
   const { sid } = req.params;
   const sql = "DELETE FROM `products_types` WHERE sid=?";
