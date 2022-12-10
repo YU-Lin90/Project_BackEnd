@@ -53,6 +53,24 @@ router.get('/updateOld100',async(req,res)=>{
   res.json(1)
 })
 
+const firstNameList = ['陳','林','黃','張','李','王','吳','劉','蔡','楊']
+const lastNameList = ['冠廷','雅婷','冠宇','雅筑','怡君','宗翰','家豪','佳穎','怡萱','彥廷','承翰','宜庭','郁婷','柏翰','宇軒','怡婷','詩涵','家瑋','冠霖','鈺婷']
+
+//假會員資料
+router.use("/getMemberData", async (req, res) => {
+  for (let index = 0; index < 100; index++) {
+    const phone = ('09' + getIntTo0(99999999) +'0123456789').slice(0,10)
+    const email = 'M' + phone
+    const password = 'M' + phone + 'PS'
+    const name = firstNameList[getIntTo0(9)] + lastNameList[getIntTo0(19)]
+    const image = 'memberAvatar' + getIntTo1(20) + '.png'
+    const sql = "INSERT INTO `member`(`name`, `email`, `password`, `phone`,`image`) VALUES (?,?,?,?,?)"
+    const datas = [name,email,password,phone,image]
+    const result = await DB.query(sql,datas)    
+  }
+
+  res.json(1)
+})
 
 router.get("/SetNewFakeShop", async (req, res) => {
   for (let i = 0 ;i<100;i++){
@@ -277,7 +295,28 @@ router.post('/Updatelatlng',async(req,res)=>{
   res.json(totalRes)
 })
 
-const contentList = ['','超難吃','普通難吃','普普通通','還算好吃','非常好吃']
+const contentList = ["",
+"不試還好，試了愛上，整體而言，水準非常高阿，甚至有比我當年的記憶還更高一層次的水準。加油，真金不怕火煉，好吃的店家總是不怕別人比較，也許你們有考量可能會降低你們品牌價值或是可能他的講法對你們用心準備餐點的態度上你們不能接受，可是我只能講，我們家最少被征服了。",
+"口味真的普通但價格很好濃湯好喝但紅醬很水很淡，米飯很軟不像燉飯，比較像一般煮的比較軟的飯加上醬，類似稀飯？但有口感一點，總之不是燉飯墨魚麵偏辣，但口味也是普通優點是海鮮很新鮮！價格很棒",
+"東西cp值高 算很美味 份量很夠 但店員態度感覺很隨性 個人覺得很不優",
+"學生價只限台大學生，雖然我也是學生，但沒有優惠QQ。",
+"味道好，份量多，服務親切，結帳時店員還關心夠不夠吃，大推！",
+"奶油唐揚雞麵+墨魚海鮮燉飯+A餐。人氣店家，出餐速度快。餐包是真的會爆漿，檸檬紅茶好像是飲料機的，好甜。墨魚海鮮燉飯的海鮮量很多，墨魚汁也很充分，只是飯好像沒有入味。奶油醬偏少，吃起來好乾，唐揚雞有點偏鹹，麵條軟硬度適中。味道一般般，但整體CP值中上",
+"價位差不多100～150台大學生證會附一杯檸檬紅茶餐點品質還不錯",
+"餐點美味！份量不大剛剛好 不膩！餐包意外的好吃 一甜一鹹下午二點多內用，一位女外場服務人員 服務態度非常好也很親切 值得嘉許也希望以後可以有純紅茶可以選擇",
+"白酒蛤蜊不好吃麵上面很多一粒一粒的不知道是蒜 還是沒溶開的白醬蛤蜊也很小很瘦沒肉 玉米湯好喝 料多",
+"不是評價食物好不好吃，是喜歡他們對待外送員的方式，雖然等了15分鐘左右但他們很客氣，還送我一杯檸檬紅茶，我覺得店家慢基本上不是他們的問題，畢竟一下來很多單也沒辦法，重要的是他們有沒有尊重你的感覺，這對我比較重要，當然越快越好因為多一單是一單啊哈哈。",
+"佛羅倫斯奶油海鮮燉飯，醬料味道偏鹹，把奶味都蓋過去了....",
+"麵量肉量都很足味道不差附湯不會稀奶油餐包一甜一鹹都好吃CP值很高！",
+"路過好幾次每次都看到裡面人超多的，這次趁一開店馬上就去光臨，cp 值超高，不只是上面有寫焗烤的餐點是焗烤，還可以把其他餐點+焗烤，但還是要多加錢啦！但選擇就有很多種，而且還有專門素食的菜單，有五辛素和全素的菜單，素食者可以不用擔心喔！",
+"這個價位，這個味道，沒什麼好說的，吊打台北市絕大部分的平價義大利麵，只差麵硬還是沒有麵芯而已，整體味道很棒，煙燻培根很好吃",
+"食材吃的出來非常用心 服務相當好 #香蒜白酒蛤蜊湯麵 用八顆蛤蜊 大顆又新鮮 讚喔 #香辣蔬菜青醬很讚 有一點芹菜點綴 爽辣 #蘑菇海鮮燉飯 濃郁菇味搭配米香 香濃 #墨魚醬海鮮麵 有點清淡 感覺味道可以再重一點 #辣味番茄培根 培根肉大塊 大辣會辣到噴火",
+"價位中等，青醬雞肉麵好吃，番茄海鮮飯不推，口感跟味道很奇怪，燙青菜比預期好吃，檸檬紅茶好喝，建議點麵類不要點飯",
+"焗烤cp值高！咖哩雞肉味道也好吃",
+"剛點松子青醬蛤蜊麵，根本沒半顆松子！傻眼！且店員一開始找錯錢，沒任何表示也罷，態度還不太好，不會再買了！",
+"非常平價的義式料理蛤蜊給的很大顆, 但腥味滿重的...可能不太新鮮雞翅滿乾的, 最好吃的是雞塊 但在學生地方, CP值滿高的！",
+"餐點選擇多樣，份量還行，焗烤肯給，佛卡夏適合當飯後甜點"
+]
 function getIntTo1(x) {
   return Math.floor(Math.random() * x + 1);
 }
@@ -294,10 +333,10 @@ router.get("/SetFakeShopEvas", async (req, res) => {
   
     const randomScore = getIntTo1(5)
     const memberSid = getIntTo1(100)
-    const orderSid = getIntRange(10000,99999)  
+    const orderSid = getIntRange(10000,99999) 
   
     const sql = "INSERT INTO `shop_evaluation`( `order_sid`, `member_sid`, `shop_sid`, `evaluation_score`, `evaluation_content`, `evaluation_time`) VALUES (?,?,?,?,?,?)"
-    const inputDatas = [orderSid,memberSid,89,randomScore,contentList[randomScore],newDay]
+    const inputDatas = [orderSid,memberSid,89,randomScore,contentList[getIntTo0(19)],newDay]
   
     const [result] = await DB.query(sql,inputDatas)
   }
