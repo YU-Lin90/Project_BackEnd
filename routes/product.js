@@ -495,6 +495,10 @@ router.put("/:shop_sid", upload.single("avatar"), async (req, res) => {
   const src = req.file ? req.file.filename : "";
   available = available ? 1 : 0;
   discount = price;
+  if (typeof options_types === "string") {
+    console.log(typeof options_types);
+    options_types = [Number(options_types)];
+  }
   options_types = options_types ? options_types : [];
 
   try {
@@ -565,7 +569,7 @@ router.delete("/demo-data", upload.none(), async (req, res) => {
     const sql = "DELETE FROM `products` WHERE sid=?";
     const [result] = await db.query(sql, [i]);
   }
-  res.send("OK")
+  res.send("OK");
 });
 
 router.delete("/:sid", upload.none(), async (req, res) => {
