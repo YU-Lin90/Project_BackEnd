@@ -324,7 +324,12 @@ app.use(
 );
 //店家列表
 app.use("/Shopping/", require("./Api/Shopping/Shopping"));
-app.use("/StoreSellAnalyze/", require("./Api/Store/StoreSellAnalyze"));
+
+//地區店家:台北/臺北
+app.use("/City/", require("./Api/Shopping/Shopping"));
+
+//店家銷售分析
+app.use("/StoreSellAnalyze/", require("./Api/Shopping/Taipei"));
 
 //店家訂單(資料)
 app.use(

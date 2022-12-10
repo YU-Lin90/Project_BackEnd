@@ -26,50 +26,44 @@ router.use("/", async (req, res, next) => {
   //是否有配送時間
   let wait_time = req.query.wait_time ? Number(req.query.wait_time.trim()) : 0;
   //是否有排序方式
-  let order = req.query.order
-  //是否為城市搜尋
-  let area = req.query.area ? req.query.area : "" ;
-
-
+  let order = req.query.order;
+  
   //預設搜尋來源為店家
   let origin = ` shop `;
 
   //SQL條件字串
   let where = ` WHERE shop.sid <> '101' `;
 
- //SQL資料排序方式(預設是按照評分)
+  //SQL資料排序方式(預設是按照評分)
   order = ` ORDER BY average_evaluation DESC `;
 
-  console.log("價格上限",price_max)
-  console.log("價格下限",price_min)
-  console.log("等待時間",wait_time)
+  console.log("價格上限", price_max);
+  console.log("價格下限", price_min);
+  console.log("等待時間", wait_time);
 
-  let food_type = ` , food_type.sid AS food_type_sid , food_type.type_name `
-  let food_join = ` left join food_type on shop.food_type_sid = food_type.sid `
+  let food_type = ` , food_type.sid AS food_type_sid , food_type.type_name `;
+  let food_join = ` left join food_type on shop.food_type_sid = food_type.sid `;
   //SQL搜尋後
   //SELECT shop.*  , products.sid AS products_sid , products.name AS products_name , products.price FROM `shop` left Join products on shop.sid = products.shop_sid
 
   //SQL僅搜尋台北/臺北
-  //SELECT shop.* , COUNT(*) AS products_count ,COUNT(*) OVER() AS total_rows , products.sid AS products_sid , products.name AS products_name , products.price , food_type.type_name  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 left join food_type on shop.food_type_sid = food_type.sid WHERE shop.sid <> 101 AND shop.`address` LIKE '%台北%' OR shop.`address` LIKE '%臺北%' GROUP BY shop.sid ORDER BY average_evaluation DESC 
-
+  //SELECT shop.* , COUNT(*) AS products_count ,COUNT(*) OVER() AS total_rows , products.sid AS products_sid , products.name AS products_name , products.price , food_type.type_name  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 left join food_type on shop.food_type_sid = food_type.sid WHERE shop.sid <> 101 AND shop.`address` LIKE '%台北%' OR shop.`address` LIKE '%臺北%' GROUP BY shop.sid ORDER BY average_evaluation DESC
 
   //SQL僅搜尋商品
   //SELECT shop.*  , products.sid AS products_sid , products.name AS products_name , products.price FROM `products` inner Join shop on shop.sid = products.shop_sid AND products.price < 100
 
   //SQL完整搜尋語句(共搜尋三字段)
-  // SELECT shop.*  , 
+  // SELECT shop.*  ,
   //products.sid AS products_sid , products.name AS products_name , products.price  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 WHERE 1 AND shop.`name` LIKE '%咖哩%' OR products.`name` LIKE '%咖哩%' OR shop.`name` LIKE '%豆漿%' OR products.`name` LIKE '%豆漿%' OR shop.`name` LIKE '%沙茶%' OR products.`name` LIKE '%沙茶% GROUP BY shop.sid ORDER BY average_evaluation DESC;
-  
+
   //SQL加上查詢總筆數
   // SELECT shop.* , COUNT(*) AS products_count ,COUNT(*) OVER() AS total_rows , products.sid AS products_sid , products.name AS products_name , products.price  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 WHERE shop.sid <> 101 AND shop.`name` LIKE '%咖哩%' OR products.`name` LIKE '%咖哩%' OR shop.`name` LIKE '%豆漿%' OR products.`name` LIKE '%豆漿%' OR shop.`name` LIKE '%沙茶%' OR products.`name` LIKE '%沙茶%' GROUP BY shop.sid ORDER BY average_evaluation DESC;
 
   //SQL再加上食物種類
-  //SELECT shop.* , COUNT(*) AS products_count ,COUNT(*) OVER() AS total_rows , products.sid AS products_sid , products.name AS products_name , products.price , food_type.type_name  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 left join food_type on shop.food_type_sid = food_type.sid WHERE shop.sid <> 101 AND shop.`name` LIKE '%咖哩%' OR products.`name` LIKE '%咖哩%' OR shop.`name` LIKE '%豆漿%' OR products.`name` LIKE '%豆漿%' OR shop.`name` LIKE '%沙茶%' OR products.`name` LIKE '%沙茶%' GROUP BY shop.sid ORDER BY average_evaluation DESC 
-  
+  //SELECT shop.* , COUNT(*) AS products_count ,COUNT(*) OVER() AS total_rows , products.sid AS products_sid , products.name AS products_name , products.price , food_type.type_name  FROM shop left Join products on shop.sid = products.shop_sid AND price <= 250 AND price >= 150 left join food_type on shop.food_type_sid = food_type.sid WHERE shop.sid <> 101 AND shop.`name` LIKE '%咖哩%' OR products.`name` LIKE '%咖哩%' OR shop.`name` LIKE '%豆漿%' OR products.`name` LIKE '%豆漿%' OR shop.`name` LIKE '%沙茶%' OR products.`name` LIKE '%沙茶%' GROUP BY shop.sid ORDER BY average_evaluation DESC
 
   //如果搜尋文字or價格上限or價格下限
   if (search || price_max || price_min || wait_time) {
-
     //SQL搜尋放入商品表的SID、商品名、商品價格
     let products = ``;
 
@@ -77,7 +71,7 @@ router.use("/", async (req, res, next) => {
     let join = ``;
 
     //若有設定等待時間，則where的頭必須加入
-    if (!search || wait_time ){
+    if (!search || wait_time) {
       where += ` AND wait_time <= ${wait_time}`;
     }
 
@@ -91,6 +85,9 @@ router.use("/", async (req, res, next) => {
       where += ` AND shop.\`name\` LIKE ${DB.escape("%" + search[0] + "%")}
             OR products.\`name\` LIKE ${DB.escape("%" + search[0] + "%")}
             `;
+      if (wait_time > 0) {
+        where += ` AND wait_time <= ${wait_time} `;
+      }
       //多重字段下，第二個以後的字段
       if (search.length > 1) {
         for (let x = 1; x < search.length; x++) {
@@ -98,15 +95,18 @@ router.use("/", async (req, res, next) => {
           where += ` OR shop.\`name\` LIKE ${DB.escape("%" + search[x] + "%")}
         OR products.\`name\` LIKE ${DB.escape("%" + search[x] + "%")}
         `;
+          if (wait_time > 0) {
+            where += ` AND wait_time <= ${wait_time} `;
+          }
         }
       }
       //若有文字搜索中有設定等待時間，則where尾部必須再加一次
-      if(wait_time > 0){
+      if (wait_time > 0) {
         where += ` AND wait_time <= ${wait_time}`;
       }
     }
     //若沒有搜尋文字但有價格條件，將搜尋來源變更為僅商品
-    if(!search && price_max) {
+    if (!search && price_max) {
       //加入餐點的sid、name、price這三行
       products = ` , products.sid AS products_sid , products.name AS products_name , products.price `;
       //inner join 餐點所屬店家sid=店家的sid、name、price
@@ -114,13 +114,13 @@ router.use("/", async (req, res, next) => {
       //來源變更為"商品"
       origin = ` products `;
     }
-    if(!search && price_min) {
+    if (!search && price_min) {
       products = ` , products.sid AS products_sid , products.name AS products_name , products.price `;
       origin = ` products `;
       join = ` inner Join shop on shop.sid = products.shop_sid `;
     }
 
-
+    //TODO:有如果價格上限是0而非空值則一樣被視為空值的BUG
     //價格範圍上限
     if (price_max > 0) {
       join += ` AND price <= ${price_max} `;
@@ -135,10 +135,8 @@ router.use("/", async (req, res, next) => {
       join += ` AND price >= ${price_min} `;
     }
 
-
     //組成完整的SQL結構語句
     let sql_search = `SELECT shop.* , COUNT(*) AS products_count , COUNT(*) OVER() AS total_rows  ${products} ${food_type} FROM ${origin} ${join} ${food_join} ${where} GROUP BY sid ${order}`;
-
 
     //要資料
     let [result] = await DB.query(sql_search);
