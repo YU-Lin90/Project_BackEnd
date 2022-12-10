@@ -255,5 +255,55 @@ router.get("/RandomOrderStep4", async (req, res) => {
   res.json(orderSid);
 });
 
+//更新經緯度資料
+//SELECT `sid`, `name`, `email`, `password`, `address`, `phone`, `food_type_sid`, `bus_start`, `bus_end`, `rest_right`, `src`, `wait_time`, `average_evaluation`, `shop_lat`, `shop_lng` FROM `shop` WHERE 1
+
+router.get('/GetAllAddress',async(req,res)=>{
+  const sql = "SELECT `sid`, `address` FROM `shop` WHERE `sid` < 101"
+  const [result] = await DB.query(sql)
+  res.json(result)  
+})
+router.post('/Updatelatlng',async(req,res)=>{
+  const postData = req.body
+  const updateSql = "UPDATE `shop` SET `shop_lat`=?,`shop_lng`=? WHERE `sid` = ?"
+  const totalRes = []
+  for (let element of postData){
+    const lat = element.lat
+    const lng = element.lng
+    const sid = element.sid
+    const [result] = await DB.query(updateSql,[lat,lng,sid])
+    totalRes.push(result)
+  }
+  res.json(totalRes)
+})
+
+const contentList = ['','超難吃','普通難吃','普普通通','還算好吃','非常好吃']
+function getIntTo1(x) {
+  return Math.floor(Math.random() * x + 1);
+}
+function getIntRange(min, max) {
+  return Math.floor(Math.random() * (max + 1 - min) + min);
+}
+
+router.get("/SetFakeShopEvas", async (req, res) => {
+  for(let i = 1 ;i<101;i++){
+    const oneHour = 3600 * 1000;
+    const hourPerWeek = 24 * 7;
+    const newOrderDate = getIntRange(5, hourPerWeek) * oneHour;
+    const newDay = new Date(new Date() - newOrderDate) ;
+  
+    const randomScore = getIntTo1(5)
+    const memberSid = getIntTo1(100)
+    const orderSid = getIntRange(10000,99999)  
+  
+    const sql = "INSERT INTO `shop_evaluation`( `order_sid`, `member_sid`, `shop_sid`, `evaluation_score`, `evaluation_content`, `evaluation_time`) VALUES (?,?,?,?,?,?)"
+    const inputDatas = [orderSid,memberSid,89,randomScore,contentList[randomScore],newDay]
+  
+    const [result] = await DB.query(sql,inputDatas)
+  }
+  res.json(1)
+})
+
+
 
 module.exports = router;

@@ -131,6 +131,7 @@ router.post('/add',
     ,
     // upload.single('avatar'),
     async (req, res) => {
+        const h = await bcrypt.hash(req.body.password,10);
         console.log(req.body);
         try {
             if (!req.file) {
@@ -138,7 +139,7 @@ router.post('/add',
                 const image = null;
                 const [result] = await db.query(sql, [
                     req.body.email,
-                    req.body.password,
+                    h,
                     req.body.name,
                     req.body.phone,
                     { image },]
@@ -175,7 +176,7 @@ router.post('/add',
                 console.log(image);
                 const [result] = await db.query(sql, [
                     req.body.email,
-                    req.body.password,
+                    h,
                     req.body.name,
                     req.body.phone,
                     req.file.filename,
@@ -235,22 +236,10 @@ router.get('/edit', async (req, res) => {
     res.json(rows);
 });
 router.put('/edit/:sid', upload.single('avatar'),
-    body('password')
-        .trim()
-        .isLength({ min: 9 })
-        .withMessage("密碼格式錯誤"),
     body('phone')
         .trim()
         .isLength(10)
         .withMessage("手機格式錯誤"),
-    body("doublepassword")
-        .trim()
-        .custom((value, { req }) => {
-            if (value !== req.body.password) {
-                throw new Error("密碼不吻合"); // 兩次輸入的密碼不相同
-            }
-            return true;
-        }),
     (req, res, next) => {
         console.log(req.body);
         // Finds the validation errors in this request and wraps them in an object with handy functions
@@ -261,27 +250,14 @@ router.put('/edit/:sid', upload.single('avatar'),
         next()
     }, async (req, res) => {
         console.log(req.params.sid);
-        const extMap = {
-            'image/jpeg': '.jpg',
-            'image/png': '.png',
-            'image/gif': '.gif',
-        };
-        const output = {
-            success: false,
-            code: 0,
-            error: {},
-            postData: req.body, // 除錯用
-        };
-
         // TODO: 檢查欄位的格式, 可以用 joi
         try {
             if (!req.file) {
 
-                const sql = "UPDATE member SET name=?,password=?,phone=? WHERE sid=?";
+                const sql = "UPDATE member SET name=?,phone=? WHERE sid=?";
                 const image = null;
                 const [result] = await db.query(sql, [
                     req.body.name,
-                    req.body.password,
                     req.body.phone,
                     req.params.sid
                 ]);
@@ -301,10 +277,9 @@ router.put('/edit/:sid', upload.single('avatar'),
                 console.log("111111");
                 console.log(req.file);
                 console.log(req.file.filename);
-                const sql = "UPDATE member SET name=?,password=?,phone=?,image=? WHERE sid=?";
+                const sql = "UPDATE member SET name=?,phone=?,image=? WHERE sid=?";
                 const [result] = await db.query(sql, [
                     req.body.name,
-                    req.body.password,
                     req.body.phone,
                     req.file.filename,
                     req.params.sid
@@ -423,6 +398,61 @@ router.get('/api6', async (req, res) => {
     console.log(result);
     res.json(result);
 });
+
+router.put('/edit2/:sid', upload.none(),
+
+    body('password')
+        .trim()
+        .isLength({ min: 9 })
+        .withMessage("密碼格式錯誤"),
+    body("doublepassword")
+        .trim()
+        .custom((value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error("密碼不吻合"); // 兩次輸入的密碼不相同
+            }
+            return true;
+        }),
+    (req, res, next) => {
+        console.log(req.body);
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next()
+    }, async (req, res) => {
+        console.log(req.params.sid);
+        const output = {
+            success: false,
+            code: 0,
+            error: '修改失敗',
+            postData: req.body, // 除錯用
+        };
+
+        // TODO: 檢查欄位的格式, 可以用 joi
+       
+                const sql2 = "SELECT password FROM member WHERE sid=?";
+                const [result2] = await db.query(sql2, [
+                    req.params.sid
+                ]);
+                const a=result2[0].password;
+                console.log(a);
+                console.log(req.body.original);
+                const p=await bcrypt.compare(req.body.original, a)
+                console.log(p);
+                if(p){
+                    const h = await bcrypt.hash(req.body.password,10);
+                    const sql = "UPDATE member SET password=? WHERE sid=?";
+                    const [result] = await db.query(sql, [
+                        h,
+                        req.params.sid
+                    ]);
+                    return res.json(1);
+                }else{
+                    return res.json(0)
+                }
+    });
 
 
 module.exports = router;
