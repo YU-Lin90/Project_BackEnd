@@ -22,12 +22,30 @@ router.get("/:shop_sid", async (req, res) => {
 
   res.json(data);
 });
+// 快速填入
+router.post("/demo-data", upload.none(), async (req, res) => {
+  const data = [
+    { sid: 101, name: "嚼對推薦專區", shop_sid: 41, type_order: 2 },
+    { sid: 102, name: "牧場鮮奶茶", shop_sid: 41, type_order: 3 },
+    { sid: 103, name: "台灣鮮豆奶", shop_sid: 41, type_order: 4 },
+    { sid: 104, name: "綠光牧場鮮奶", shop_sid: 41, type_order: 5 },
+    { sid: 105, name: "手作特調", shop_sid: 41, type_order: 6 },
+  ];
+  for (let i = 0; i < data.length; i++) {
+    const { sid, name, shop_sid, type_order } = data[i];
+    const sql =
+      "INSERT INTO `products_types`(`sid`, `name`, `shop_sid`, `type_order`) VALUES (?,?,?,?)";
+    const result = await db.query(sql, [sid, name, shop_sid, type_order]);
+  }
+
+  res.send("OK");
+});
 
 // 儲存新增類別的API，sid是type_sid
 router.post("/:shop_sid", upload.none(), async (req, res) => {
   const { shop_sid } = req.params;
   const { type_name } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
 
   const output = {
     success: false,
@@ -36,10 +54,11 @@ router.post("/:shop_sid", upload.none(), async (req, res) => {
 
   try {
     // 找到目前最高的type_order是多少，並+1
-    const sql_order =
+    const order_sql =
       "SELECT type_order FROM `products_types` WHERE shop_sid=? ORDER BY type_order DESC LIMIT 1";
-    const [[{ type_order: getOrder }]] = await db.query(sql_order, [shop_sid]);
-    const order = Number(getOrder) + 1;
+    const [[order_rows]] = await db.query(order_sql, [shop_sid]);
+    console.log(order_rows);
+    const order = order_rows ? Number(order_rows.type_order) : 1;
 
     // 計算目前order排到第幾個
     // const sql_order =
@@ -58,7 +77,7 @@ router.post("/:shop_sid", upload.none(), async (req, res) => {
   } catch (e) {
     output.error = e;
   }
-
+  console.log(output);
   res.json(output);
 });
 
