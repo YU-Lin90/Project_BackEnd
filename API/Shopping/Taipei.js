@@ -22,12 +22,12 @@ router.use("/Taipei", async (req, res, next) => {
   let food_type = ` , food_type.sid AS food_type_sid , food_type.type_name `;
   let food_join = ` left join food_type on shop.food_type_sid = food_type.sid `;
 
-  console.log("query字串", req.query.search);
-  console.log("搜尋字串", search);
-  console.log("SQL語法", sql_search);
+
 
   //顯示所有台北商家
   sql_search = ` SELECT shop.*  ${food_type} from shop ${food_join} ${where} ${order}`;
+
+  console.log("SQL語法", sql_search);
 
   //要資料
   let [result] = await DB.query(sql_search);

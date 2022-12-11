@@ -326,10 +326,10 @@ app.use(
 app.use("/Shopping/", require("./Api/Shopping/Shopping"));
 
 //地區店家:台北/臺北
-app.use("/City/", require("./Api/Shopping/Shopping"));
+app.use("/City/", require("./Api/Shopping/Taipei"));
 
 //店家銷售分析
-app.use("/StoreSellAnalyze/", require("./Api/Shopping/Taipei"));
+app.use("/StoreSellAnalyze/", require("./Api/Store/StoreSellAnalyze"));
 
 //店家訂單(資料)
 app.use(
@@ -380,8 +380,8 @@ app.use(
 //deliving/GetAddress?side=${side}&orderSid=${orderSid}
 app.use('/deliving',deliverTokenLoginCheck,require('./API/Deliver/DelivingDetails'))
 
+//外送員銷售分析
 app.use('/deliverMessager',require('./API/Deliver/DeliverMessager'))
-
 
 //管理者
 //優惠券管理(資料)
