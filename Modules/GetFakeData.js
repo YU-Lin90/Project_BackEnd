@@ -28,25 +28,54 @@ const drList = [directionNS,directionWE,directionND]
 
 const ams = ['炸雞','漢堡','牛排','美式餐廳']
 const amsImg = ['amF','amH','amS','amR']
+const amsProduct = ['炸雞','漢堡','牛排','美式料理']
 const jps = ['壽司','拉麵','丼','日本料理']
 const jpsImg = ['jpS','jpN','jpD','jpR']
+const jpsProduct = ['壽司','拉麵','丼','日式料理']
 const chs = ['麵店','小吃店','便當','豆漿店']
 const chsImg = ['chN','chR','chB','chS']
+const chsProduct = ['麵','小吃','便當','豆漿']
 const its = ['義大利麵','義式廚房',' PASTA','比薩']
 const itsImg =['italyN','italyR','italyN','italyP']
+const itsProduct = ['義大利麵','義式料理','焗烤義大利麵','比薩']
 const dks = ['咖啡','冷飲','果汁吧','鮮茶']
 const dksImg = ['dkC','dkD','dkF','dkT']
+const dksProduct = ['咖啡','氣泡飲','果汁','綠茶']
 const dss = ['蛋糕','豆花','冰品','甜點坊']
 const dssImg = ['dsC','dsB','dsI','dsR']
+const dssProduct = ['蛋糕','豆花','刨冰','泡芙']
+
+//===============================================分隔線================================================
+
+const nameList = ['好吃','平價','好再來','老饕','隨意','源味','優質','好饗','饗餚','餚享','家鄉','佳好','原食']//13個
+
+//===============================================分隔線================================================
+
 const types = [0,ams,jps,chs,its,dks,dss]
-const nameList = ['好吃','平價','好再來','老饕','隨意','源味','優質','好饗','饗餚','餚享','家鄉','佳好','德新']//13個
-
 const imgList = [0,amsImg,jpsImg,chsImg,itsImg,dksImg,dssImg]
+const productList = [0,amsProduct,jpsProduct,chsProduct,itsProduct,dksProduct,dssProduct]
 
-//Setfakedata/SetNewFakeShop
+//===============================================分隔線================================================
+//Setfakedata/SetNewFakeShop  Setfakedata/updateProductOld100
+//  <1101  33~40 52~60  90~100
+
+//const sql = "INSERT INTO `products`(`sid`, `name`, `shop_sid`, `price`, `products_type_sid`, `available`, `type`, `product_order`, `discount`, `note`, `src`) VALUES ()"
+
+
+router.get('/updateProductOld100',async(req,res)=>{
+  for (let i = 1 ;i<=1101;i++){
+    const sql = "UPDATE `products` SET `src`=? WHERE `sid` = ?"
+    const srcName = 'store' + i + '.jpg'
+    const getSrc = imgList[getIntTo1(6)][getIntTo0(3)] + getIntTo1(8) + '.jpg'
+    await DB.query(sql,[getSrc,i])
+  }
+  res.json(1)
+})
+
+
 router.get('/updateOld100',async(req,res)=>{
   for (let i = 0 ;i<100;i++){
-    const sql = "UPDATE `shop` SET `src`=? WHERE `sid` = ?"
+    const sql = "UPDATE `product` SET `src`=? WHERE `sid` = ?"
     const srcName = 'store' + i + '.jpg'
     await DB.query(sql,[srcName,i])
   }
@@ -66,7 +95,7 @@ router.use("/getMemberData", async (req, res) => {
     const image = 'memberAvatar' + getIntTo1(20) + '.png'
     const sql = "INSERT INTO `member`(`name`, `email`, `password`, `phone`,`image`) VALUES (?,?,?,?,?)"
     const datas = [name,email,password,phone,image]
-    const result = await DB.query(sql,datas)    
+    const [{insertId}] = await DB.query(sql,datas)
   }
 
   res.json(1)
@@ -96,11 +125,51 @@ router.get("/SetNewFakeShop", async (req, res) => {
   
     const sql = "INSERT INTO `shop`(`name`, `email`, `password`, `address`, `phone`, `food_type_sid`, `bus_start`, `bus_end`, `rest_right`, `src`, `wait_time`, `average_evaluation`) VALUES (?,?,?,?,? ,?,?,?,?,? ,?,?)"
     const [{insertId}] = await DB.query(sql,datas)
-  }
 
+    for (let i=0;i<5;i++){
+      const getName = productList[foodType][getIntTo0(3)]
+      const getNote = getName
+      const getSrc = imgList[foodType][getIntTo0(3)] + getIntTo1(8) + '.jpg'
+      const productSql = "INSERT INTO `products`(`name`, `shop_sid`, `price`, `products_type_sid`, `available`, `type`, `product_order`, `discount`, `note`, `src`) VALUES (?,?,100,1,1,?,0,100,?,?)"
+      const insertDatas = [getName,insertId,foodType,getNote,getSrc]
+      const result = await DB.query(productSql,insertDatas)
+    }
+  }
+  res.json(1)
+})
+//Setfakedata/updateOld100EmptyProduct
+router.get("/updateOld100EmptyProduct", async (req, res) => {
+  //33~40 52~60  90~100
+  const shopList = [33,34,35,36,37,38,39,40,52,53,54,55,56,57,58,59,60,90,91,92,93,94,95,96,97,98,99,100]
+  for(let element of shopList){
+    const shopSid = element
+    for (let i=0;i<5;i++){
+      const foodType = getIntTo1(6)
+      const getName = productList[foodType][getIntTo0(3)]
+      const getNote = getName
+      const getSrc = imgList[foodType][getIntTo0(3)] + getIntTo1(8) + '.jpg'
+      const productSql = "INSERT INTO `products`(`name`, `shop_sid`, `price`, `products_type_sid`, `available`, `type`, `product_order`, `discount`, `note`, `src`) VALUES (?,?,100,1,1,?,0,100,?,?)"
+      const insertDatas = [getName,shopSid,foodType,getNote,getSrc]
+      const result = await DB.query(productSql,insertDatas)
+    }
+  }
 
   res.json(1)
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //修正店家資料
 router.get('/updateShopDatas',async(req,res)=>{
 
@@ -134,7 +203,7 @@ router.get("/randomOrder", async (req, res) => {
   // return res.json(newDay);
 
   const orderSql =
-    "INSERT INTO `orders`(`member_sid`, `shop_sid`, `deliver_sid`,`order_time`, `order_total`, `sale`, `paid`, `pay_method`, `deliver_fee`, `shop_order_status`, `deliver_order_status`, `total_amount`, `receive_name`, `receive_phone`, `receive_address`, `order_complete`) VALUES (1,89,1,?,?,?,1,0,?,1,1,?,'ゆう','0912345678','台北市大安區復興南路一段390號2樓',0)";
+    "INSERT INTO `orders`(`member_sid`, `shop_sid`, `deliver_sid`,`order_time`, `order_total`, `sale`, `paid`, `pay_method`, `deliver_fee`, `shop_order_status`, `deliver_order_status`, `total_amount`, `receive_name`, `receive_phone`, `receive_address`, `order_complete`) VALUES (1,89,1,?,?,?,1,0,?,1,1,?,'陳資展','0912345678','台北市大安區復興南路一段390號2樓',0)";
 
   const orderDetail = [newDay, order_total, sale, fee, total_amount];
 
