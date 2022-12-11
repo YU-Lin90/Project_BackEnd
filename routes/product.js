@@ -443,7 +443,11 @@ router.post("/:shop_sid", upload.single("avatar"), async (req, res) => {
   // 找到上傳圖片的路徑名稱(檔名)，當作資料表中的src
   const src = req.file ? req.file.filename : "";
   available = available ? 1 : 0;
-  discount = discount.trim() ? Number(discount) : 0;
+  discount = price;
+  if (typeof options_types === "string") {
+    console.log(typeof options_types);
+    options_types = [Number(options_types)];
+  }
   options_types = options_types ? options_types : [];
 
   // 把這個商品的基本資料填入
