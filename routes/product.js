@@ -661,7 +661,7 @@ router.put("/:shop_sid", upload.single("avatar"), async (req, res) => {
 
 // 刪除快速填入product
 router.delete("/demo-data", upload.none(), async (req, res) => {
-  for (let i = 20001; i <= 20020; i++) {
+  for (let i = 20001; i <= 20024; i++) {
     const sql = "DELETE FROM `products` WHERE sid=?";
     const [result] = await db.query(sql, [i]);
   }

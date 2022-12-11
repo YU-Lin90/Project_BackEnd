@@ -279,25 +279,25 @@ router.post("/demo-data", upload.none(), async (req, res) => {
   // 建立ot_opt關係
   otpr_data = [
     // 20001商品
-    { sid: 2001, product_sid: 20001, options_type_sid: 1001 },
-    { sid: 2002, product_sid: 20001, options_type_sid: 1002 },
-    { sid: 2003, product_sid: 20001, options_type_sid: 1003 },
-    { sid: 2004, product_sid: 20001, options_type_sid: 1004 },
+    { sid: 2001, product_sid: 20001, options_type_sid: 1002 },
+    { sid: 2002, product_sid: 20001, options_type_sid: 1003 },
+    { sid: 2003, product_sid: 20001, options_type_sid: 1004 },
+    { sid: 2004, product_sid: 20001, options_type_sid: 1006 },
     // 20002商品
-    { sid: 2005, product_sid: 20002, options_type_sid: 1001 },
-    { sid: 2006, product_sid: 20002, options_type_sid: 1002 },
-    { sid: 2007, product_sid: 20002, options_type_sid: 1003 },
-    { sid: 2008, product_sid: 20002, options_type_sid: 1004 },
+    { sid: 2005, product_sid: 20002, options_type_sid: 1002 },
+    { sid: 2006, product_sid: 20002, options_type_sid: 1003 },
+    { sid: 2007, product_sid: 20002, options_type_sid: 1004 },
+    { sid: 2008, product_sid: 20002, options_type_sid: 1001 },
     // 20003商品
-    { sid: 2009, product_sid: 20003, options_type_sid: 1001 },
-    { sid: 2010, product_sid: 20003, options_type_sid: 1002 },
-    { sid: 2011, product_sid: 20003, options_type_sid: 1003 },
-    { sid: 2012, product_sid: 20003, options_type_sid: 1004 },
+    { sid: 2009, product_sid: 20003, options_type_sid: 1002 },
+    { sid: 2010, product_sid: 20003, options_type_sid: 1003 },
+    { sid: 2011, product_sid: 20003, options_type_sid: 1004 },
+    { sid: 2012, product_sid: 20003, options_type_sid: 1006 },
     // 20004商品
-    { sid: 2013, product_sid: 20004, options_type_sid: 1001 },
-    { sid: 2014, product_sid: 20004, options_type_sid: 1002 },
-    { sid: 2015, product_sid: 20004, options_type_sid: 1003 },
-    { sid: 2016, product_sid: 20004, options_type_sid: 1004 },
+    { sid: 2013, product_sid: 20004, options_type_sid: 1002 },
+    { sid: 2014, product_sid: 20004, options_type_sid: 1003 },
+    { sid: 2015, product_sid: 20004, options_type_sid: 1004 },
+    { sid: 2016, product_sid: 20004, options_type_sid: 1001 },
   ];
   for (let i = 0; i < otpr_data.length; i++) {
     const { sid, product_sid, options_type_sid } = otpr_data[i];
