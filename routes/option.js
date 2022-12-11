@@ -69,7 +69,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       sid: 1006,
       name: "超值加購",
       shop_sid: 41,
-      max: 4,
+      max: 1,
       min: 0,
       options_type_order: 6,
     },
@@ -263,6 +263,14 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       options_type_sid: 1006,
       option_order: 3,
     },
+    {
+      sid: 1026,
+      name: "烏龍茶【小】",
+      price: 30,
+      options_type_sid: 1006,
+      option_order: 4,
+    },
+    
   ];
   for (let i = 0; i < opt_data.length; i++) {
     const { sid, name, price, options_type_sid, option_order } = opt_data[i];
@@ -388,7 +396,7 @@ router.delete("/demo-data", upload.none(), async (req, res) => {
     const [option_type_result] = await db.query(delete_option_type_sql, [i]);
   }
 
-  for (let i = 1001; i <= 1025; i++) {
+  for (let i = 1001; i <= 1026; i++) {
     const delete_option_sql = "DELETE FROM `options` WHERE sid=?";
     const [delete_option_result] = await db.query(delete_option_sql, [i]);
   }
