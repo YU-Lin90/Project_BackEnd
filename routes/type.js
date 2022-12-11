@@ -25,11 +25,11 @@ router.get("/:shop_sid", async (req, res) => {
 // 快速填入
 router.post("/demo-data", upload.none(), async (req, res) => {
   const data = [
-    { sid: 101, name: "嚼對推薦專區", shop_sid: 41, type_order: 2 },
-    { sid: 102, name: "牧場鮮奶茶", shop_sid: 41, type_order: 3 },
-    { sid: 103, name: "台灣鮮豆奶", shop_sid: 41, type_order: 4 },
-    { sid: 104, name: "綠光牧場鮮奶", shop_sid: 41, type_order: 5 },
-    { sid: 105, name: "手作特調", shop_sid: 41, type_order: 6 },
+    { sid: 1001, name: "嚼對推薦專區", shop_sid: 41, type_order: 2 },
+    { sid: 1002, name: "牧場鮮奶茶", shop_sid: 41, type_order: 3 },
+    { sid: 1003, name: "台灣鮮豆奶", shop_sid: 41, type_order: 4 },
+    { sid: 1004, name: "綠光牧場鮮奶", shop_sid: 41, type_order: 5 },
+    { sid: 1005, name: "手作特調", shop_sid: 41, type_order: 6 },
   ];
   for (let i = 0; i < data.length; i++) {
     const { sid, name, shop_sid, type_order } = data[i];
@@ -117,7 +117,7 @@ router.put("/:sid", upload.none(), async (req, res) => {
 
 // 刪除快速填入的類別
 router.delete("/demo-data", upload.none(), async (req, res) => {
-  for (let i = 101; i <= 105; i++) {
+  for (let i = 1001; i <= 1005; i++) {
     const sql = "DELETE FROM `products_types` WHERE sid=?";
     const result = await db.query(sql, [i]);
   }

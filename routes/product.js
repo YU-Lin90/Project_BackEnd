@@ -150,7 +150,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
   // 資料sid從1201開始
   const product_data = [
     {
-      sid: 2001,
+      sid: 20001,
       name: "檸檬蜜Q晶凍",
       shop_sid: 41,
       price: 65,
@@ -163,7 +163,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product101.jpg",
     },
     {
-      sid: 2002,
+      sid: 20002,
       name: "蜜Q大麥拿鐵",
       shop_sid: 41,
       price: 75,
@@ -176,7 +176,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product102.jpg",
     },
     {
-      sid: 2003,
+      sid: 20003,
       name: "蜜Q茉香拿鐵Honey Green Tea Latte with Golden Cube Jelly",
       shop_sid: 41,
       price: 75,
@@ -189,7 +189,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product103.jpg",
     },
     {
-      sid: 2004,
+      sid: 20004,
       name: "珍珠伯爵紅茶拿鐵 Black Tea Latte with bubble",
       shop_sid: 41,
       price: 60,
@@ -202,7 +202,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product104.jpg",
     },
     {
-      sid: 2005,
+      sid: 20005,
       name: "珍珠手炒黑糖鮮奶 Brown Sugar Fresh Milk with Bubble",
       shop_sid: 41,
       price: 90,
@@ -215,7 +215,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product105.jpg",
     },
     {
-      sid: 2006,
+      sid: 20006,
       name: "仙草凍冬瓜茶 White Gourd Tea with Grass Jelly",
       shop_sid: 41,
       price: 45,
@@ -228,7 +228,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product106.jpg",
     },
     {
-      sid: 2007,
+      sid: 20007,
       name: "珍珠焙香決明大麥 Barley Tea with Bubble",
       shop_sid: 41,
       price: 45,
@@ -241,7 +241,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product107.jpg",
     },
     {
-      sid: 2008,
+      sid: 20008,
       name: "蜂蜜麥茶拿鐵Honey Barley Tea Latte",
       shop_sid: 41,
       price: 60,
@@ -254,7 +254,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product108.jpg",
     },
     {
-      sid: 2009,
+      sid: 20009,
       name: "蜂蜜綠茶拿鐵Honey Green Tea Latte",
       shop_sid: 41,
       price: 60,
@@ -267,7 +267,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product109.jpg",
     },
     {
-      sid: 2010,
+      sid: 20010,
       name: "伯爵可可拿鐵 Cocoa Earl Grey Black Tea Latte",
       shop_sid: 41,
       price: 55,
@@ -280,7 +280,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product110.jpg",
     },
     {
-      sid: 2011,
+      sid: 20011,
       name: "布朗紅茶拿鐵 Brown Sugar Black Tea Latte",
       shop_sid: 41,
       price: 55,
@@ -293,7 +293,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product111.jpg",
     },
     {
-      sid: 2012,
+      sid: 20012,
       name: "伯爵紅茶拿鐵 Earl Grey Black Tea Latte",
       shop_sid: 41,
       price: 50,
@@ -306,7 +306,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product112.jpg",
     },
     {
-      sid: 2013,
+      sid: 20013,
       name: "大正紅茶拿鐵 Traditional Black Tea Latte",
       shop_sid: 41,
       price: 50,
@@ -319,7 +319,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product113.jpg",
     },
     {
-      sid: 2014,
+      sid: 20014,
       name: "茉香綠茶拿鐵 Green Tea Latte",
       shop_sid: 41,
       price: 45,
@@ -332,7 +332,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product114.jpg",
     },
     {
-      sid: 2015,
+      sid: 20015,
       name: "琥珀烏龍拿鐵 Oolong Tea Latte",
       shop_sid: 41,
       price: 45,
@@ -345,7 +345,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product115.jpg",
     },
     {
-      sid: 2016,
+      sid: 20016,
       name: "原片青茶拿鐵 Light Oolong Latte",
       shop_sid: 41,
       price: 45,
@@ -358,7 +358,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       src: "product116.jpg",
     },
     {
-      sid: 2017,
+      sid: 20017,
       name: "焙香大麥拿鐵 Barley Tea Latte",
       shop_sid: 41,
       price: 45,
@@ -565,7 +565,7 @@ router.put("/:shop_sid", upload.single("avatar"), async (req, res) => {
 
 // 刪除快速填入product
 router.delete("/demo-data", upload.none(), async (req, res) => {
-  for (let i = 2001; i <= 2020; i++) {
+  for (let i = 20001; i <= 20020; i++) {
     const sql = "DELETE FROM `products` WHERE sid=?";
     const [result] = await db.query(sql, [i]);
   }

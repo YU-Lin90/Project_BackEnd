@@ -26,7 +26,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
   // 填入option_type
   ot_data = [
     {
-      sid: 101,
+      sid: 1001,
       name: "加料選擇",
       shop_sid: 41,
       max: 2,
@@ -34,7 +34,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       options_type_order: 1,
     },
     {
-      sid: 102,
+      sid: 1002,
       name: "尺寸選擇",
       shop_sid: 41,
       max: 1,
@@ -42,7 +42,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       options_type_order: 2,
     },
     {
-      sid: 103,
+      sid: 1003,
       name: "甜度選擇",
       shop_sid: 41,
       max: 1,
@@ -50,7 +50,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       options_type_order: 3,
     },
     {
-      sid: 104,
+      sid: 1004,
       name: "溫度選擇【冷飲】",
       shop_sid: 41,
       max: 1,
@@ -58,7 +58,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       options_type_order: 4,
     },
     {
-      sid: 105,
+      sid: 1005,
       name: "溫度選擇【熱飲】",
       shop_sid: 41,
       max: 1,
@@ -66,7 +66,7 @@ router.post("/demo-data", upload.none(), async (req, res) => {
       options_type_order: 5,
     },
     {
-      sid: 106,
+      sid: 1006,
       name: "加購選擇",
       shop_sid: 41,
       max: 4,
@@ -90,74 +90,74 @@ router.post("/demo-data", upload.none(), async (req, res) => {
   // 填入opt
   opt_data = [
     {
-      sid: 101,
+      sid: 1001,
       name: "加珍珠",
       price: 5,
       options_type_sid: 101,
       option_order: 1,
     },
     {
-      sid: 102,
+      sid: 1002,
       name: "加椰果",
       price: 5,
       options_type_sid: 101,
       option_order: 2,
     },
     {
-      sid: 103,
+      sid: 1003,
       name: "加粉條",
       price: 5,
       options_type_sid: 101,
       option_order: 3,
     },
     {
-      sid: 104,
+      sid: 1004,
       name: "加蒟蒻",
       price: 10,
       options_type_sid: 101,
       option_order: 4,
     },
     {
-      sid: 105,
+      sid: 1005,
       name: "加寒天",
       price: 10,
       options_type_sid: 101,
       option_order: 5,
     },
     // 尺寸
-    { sid: 106, name: "M", price: 0, options_type_sid: 102, option_order: 1 },
-    { sid: 107, name: "L", price: 20, options_type_sid: 102, option_order: 2 },
+    { sid: 1006, name: "M", price: 0, options_type_sid: 102, option_order: 1 },
+    { sid: 1007, name: "L", price: 20, options_type_sid: 102, option_order: 2 },
     // 甜度
     {
-      sid: 108,
+      sid: 1008,
       name: "無糖",
       price: 0,
       options_type_sid: 103,
       option_order: 1,
     },
     {
-      sid: 109,
+      sid: 1009,
       name: "微糖",
       price: 0,
       options_type_sid: 103,
       option_order: 2,
     },
     {
-      sid: 110,
+      sid: 1010,
       name: "半糖",
       price: 0,
       options_type_sid: 103,
       option_order: 3,
     },
     {
-      sid: 111,
+      sid: 1011,
       name: "少糖",
       price: 0,
       options_type_sid: 103,
       option_order: 4,
     },
     {
-      sid: 112,
+      sid: 1012,
       name: "正常糖",
       price: 0,
       options_type_sid: 103,
@@ -165,49 +165,49 @@ router.post("/demo-data", upload.none(), async (req, res) => {
     },
     // 冷飲
     {
-      sid: 113,
+      sid: 1013,
       name: "正常冰",
       price: 0,
       options_type_sid: 104,
       option_order: 1,
     },
     {
-      sid: 114,
+      sid: 1014,
       name: "少冰",
       price: 0,
       options_type_sid: 104,
       option_order: 2,
     },
     {
-      sid: 115,
+      sid: 1015,
       name: "微冰",
       price: 0,
       options_type_sid: 104,
       option_order: 3,
     },
     {
-      sid: 116,
+      sid: 1016,
       name: "去冰",
       price: 0,
       options_type_sid: 104,
       option_order: 4,
     },
     {
-      sid: 117,
+      sid: 1017,
       name: "常溫",
       price: 0,
       options_type_sid: 104,
       option_order: 5,
     },
     {
-      sid: 118,
+      sid: 1018,
       name: "溫",
       price: 0,
       options_type_sid: 104,
       option_order: 6,
     },
     {
-      sid: 119,
+      sid: 1019,
       name: "熱",
       price: 0,
       options_type_sid: 104,
@@ -215,21 +215,21 @@ router.post("/demo-data", upload.none(), async (req, res) => {
     },
     // 熱飲
     {
-      sid: 120,
+      sid: 1020,
       name: "常溫",
       price: 0,
       options_type_sid: 105,
       option_order: 1,
     },
     {
-      sid: 121,
+      sid: 1021,
       name: "溫",
       price: 0,
       options_type_sid: 105,
       option_order: 2,
     },
     {
-      sid: 122,
+      sid: 1022,
       name: "熱",
       price: 0,
       options_type_sid: 105,
@@ -250,10 +250,10 @@ router.post("/demo-data", upload.none(), async (req, res) => {
   }
   // 建立ot_opt關係
   otpr_data = [
-    { sid: 201, product_sid: 2001, options_type_sid: 101 },
-    { sid: 202, product_sid: 2001, options_type_sid: 102 },
-    { sid: 203, product_sid: 2001, options_type_sid: 103 },
-    { sid: 204, product_sid: 2001, options_type_sid: 104 },
+    { sid: 2001, product_sid: 20001, options_type_sid: 1001 },
+    { sid: 2002, product_sid: 20001, options_type_sid: 1002 },
+    { sid: 2003, product_sid: 20001, options_type_sid: 1003 },
+    { sid: 2004, product_sid: 20001, options_type_sid: 1004 },
   ];
   for (let i = 0; i < otpr_data.length; i++) {
     const { sid, product_sid, options_type_sid } = otpr_data[i];
@@ -339,17 +339,17 @@ router.put("/:shop_sid", async (req, res) => {
 });
 
 router.delete("/demo-data", upload.none(), async (req, res) => {
-  for (let i = 101; i <= 106; i++) {
+  for (let i = 1001; i <= 1006; i++) {
     const delete_option_type_sql = "DELETE FROM `options_types` WHERE sid=?";
     const [option_type_result] = await db.query(delete_option_type_sql, [i]);
   }
 
-  for (let i = 101; i <= 122; i++) {
+  for (let i = 1001; i <= 1022; i++) {
     const delete_option_sql = "DELETE FROM `options` WHERE sid=?";
     const [delete_option_result] = await db.query(delete_option_sql, [i]);
   }
 
-  for (let i = 201; i <= 204; i++) {
+  for (let i = 2001; i <= 2004; i++) {
     const delete_otpr_sql =
       "DELETE FROM `options_types_products_relation` WHERE sid=?";
     const [delete_otpr_result] = await db.query(delete_otpr_sql, [i]);
