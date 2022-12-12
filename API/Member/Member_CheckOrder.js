@@ -9,7 +9,7 @@ function changeTime(oldTime, form) {
 router.get("/GetSelectDetails", async (req, res) => {
   const memberSid = req.token.sid;
   const sql =
-    "SELECT o. `sid`,o.`order_time`, o.`shop_sid` , s.`name` FROM `orders` o LEFT JOIN `shop` s  ON s.`sid` = o. `shop_sid` WHERE `order_complete` = 0 AND `member_sid` = ? ORDER BY `order_time` DESC ";
+    "SELECT o. `sid`,o.`order_time`, o.`shop_sid` , s.`name`  FROM `orders` o LEFT JOIN `shop` s  ON s.`sid` = o. `shop_sid`  WHERE `order_complete` = 0 AND `member_sid` = ? ORDER BY `order_time` DESC ";
   const [result] = await DB.query(sql, memberSid);
 
   for (let element of result) {
@@ -30,7 +30,7 @@ router.get("/OrderDetails", async (req, res) => {
   const memberSid = req.token.sid;
   // console.log(req.query);
   const sql =
-    "SELECT o.* , s.`name` FROM `orders` o LEFT JOIN `shop` s ON s.`sid` = o.`shop_sid` WHERE o.`member_sid` = ? AND o.`sid` = ?";
+    "SELECT o.* , s.`name` ,d.`name` deliverName FROM `orders` o LEFT JOIN `shop` s ON s.`sid` = o.`shop_sid` LEFT JOIN `deliver` d ON d.`sid` = o.`deliver_sid`  WHERE o.`member_sid` = ? AND o.`sid` = ?";
 
   const [[orderResult]] = await DB.query(sql, [memberSid, orderSid]);
   const orderId =

@@ -11,7 +11,8 @@ router.get("/:shop_sid", async (req, res) => {
   };
   const { shop_sid } = req.params;
 
-  const type_sql = "SELECT * FROM products_types WHERE shop_sid=?";
+  const type_sql =
+    "SELECT * FROM products_types WHERE shop_sid=? ORDER BY products_types.type_order";
   const [type_rows] = await db.query(type_sql, [shop_sid]);
 
   const product_sql = "SELECT * FROM `products` WHERE shop_sid=?";

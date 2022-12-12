@@ -206,10 +206,14 @@ app.get("/getStoreAddress", async (req,res)=>{
 });
 //首頁輪播牆獲得圖片
 app.get("/getJumbotronImgs",async (req,res)=>{
-  const sql = "SELECT `sid`, `name`, `src`,`average_evaluation` FROM `shop` WHERE `sid` !=101  AND  `average_evaluation` > 3 ORDER BY RAND() LIMIT 3 "
+  const sql = "SELECT `sid`, `name`, `src`,`average_evaluation` FROM `shop` WHERE `sid` !=101  AND `sid` >101 AND  `average_evaluation` > 2 ORDER BY RAND() LIMIT 3 "
   const [result] = await DB.query(sql)
   res.json(result)
 })
+//獲得附近店家
+
+app.use("/ShowNearShop", require('./API/Shopping/ShowNearShop'))
+
 
 //購物流程
 //LinePay
@@ -343,6 +347,10 @@ app.use(
   [storeTokenLoginCheck],
   require("./API/Store/ConfirmOrder")
 );
+
+//店家評價列表
+app.use('/GetStoreEvas',require('./API/Store/StoreEvas'))
+
 
 //獲得正整數範圍，有含上限(最小值,最大值)
 function getIntRange(min, max) {
