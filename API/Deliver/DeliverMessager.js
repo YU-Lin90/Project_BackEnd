@@ -33,7 +33,8 @@ router.use("/:sid", async (req, res, next) => {
   //7日內每日外送額
   // let sql = `SELECT sum(deliver_fee) AS deliver_fee , DATE_FORMAT(order_time + INTERVAL 7 DAY, "%Y-%m-%d") AS order_time FROM orders_test WHERE orders_test.deliver_sid = 1 GROUP BY day(order_time) ORDER BY order_time  `;
 
-  let sql = `SELECT sum(deliver_fee) AS deliver_fee , COUNT(*) AS order_count , DATE_FORMAT(order_time + INTERVAL 7 DAY, "%Y-%m-%d") AS order_time FROM orders_test WHERE deliver_sid = 1 GROUP BY day(order_time) ORDER BY order_time `;
+  //7日內每日外送額+完成訂單量
+  let sql = `SELECT sum(deliver_fee) AS deliver_fee , COUNT(*) AS order_count , DATE_FORMAT(order_time + INTERVAL 7 DAY, "%Y-%m-%d") AS order_time FROM orders_test WHERE deliver_sid = ${sid} GROUP BY day(order_time) ORDER BY order_time `;
 
   let [result] = await DB.query(sql);
 
