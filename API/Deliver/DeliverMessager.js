@@ -7,9 +7,12 @@ function changeTime(oldTime, form) {
 }
 
 router.use("/:sid", async (req, res, next) => {
-  let sid = req.params.sid;
+  
+  //路徑:deliverSellAnalyze/:sid
 
-  console.log("銷售分析店家sid:", sid);
+  let sid = req.params.sid;
+  console.log("外送員sid:" , sid)
+
   // 測試用
   // let storeSid = 89;
 
@@ -26,17 +29,19 @@ router.use("/:sid", async (req, res, next) => {
 
   //單日銷售額(減去30天)
   // let sql = `SELECT sum(order_total) AS order_total , DATE_FORMAT(order_time - INTERVAL 30 DAY, "%Y-%m-%d") AS order_time FROM orders_test WHERE shop_sid = ${sid} GROUP BY day(order_time) ORDER BY order_time `;
-
-  //單日銷售額
-  let sql = `SELECT sum(order_total) AS order_total , DATE_FORMAT(order_time, "%Y-%m-%d") AS order_time FROM orders_test WHERE shop_sid = 89 GROUP BY day(order_time) ORDER BY order_time `;
+  
+  //7日內每日外送額
+  let sql = `SELECT sum(deliver_fee) AS deliver_fee , DATE_FORMAT(order_time + INTERVAL 7 DAY, "%Y-%m-%d") AS order_time FROM orders_test WHERE orders_test.deliver_sid = 1 GROUP BY day(order_time) ORDER BY order_time  `;
 
   let [result] = await DB.query(sql);
 
-  result.forEach((el) => {
-    el.order_time = changeTime(el.order_time, "YYYY/MM/DD");
-  });
+  result.forEach((el)=>{
+    el.order_time =  changeTime(el.order_time, 'YYYY/MM/DD')
+  })
 
   res.json(result);
 });
+
+
 
 module.exports = router;
