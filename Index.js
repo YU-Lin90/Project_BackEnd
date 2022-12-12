@@ -210,6 +210,10 @@ app.get("/getJumbotronImgs",async (req,res)=>{
   const [result] = await DB.query(sql)
   res.json(result)
 })
+//獲得附近店家
+
+app.use("/ShowNearShop", require('./API/Shopping/ShowNearShop'))
+
 
 //購物流程
 //LinePay

@@ -42,7 +42,7 @@ router.use("/", async (req, res) => {
   
 
   let sql =
-    "SELECT p.*,cc.`coupon_name`,m.`point` FROM `point_detail` p LEFT JOIN `coupon_content` cc ON p.`coupon_sid` = cc.`sid` LEFT JOIN `member` m ON p.`member_sid` = m.`sid` WHERE  `member_sid`= ? ";
+    "SELECT p.*,cc.`coupon_name`,m.`point` FROM `point_detail` p LEFT JOIN `coupon_content` cc ON p.`coupon_sid` = cc.`sid` LEFT JOIN `member` m ON p.`member_sid` = m.`sid` WHERE  `member_sid`= ? ORDER BY p.`point_change_time` DESC ";
 
 
   let [getData] = await DB.query(sql, memberSid);
