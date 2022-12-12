@@ -341,7 +341,7 @@ router.get("/RandomOrderStep4", async (req, res) => {
 //SELECT `sid`, `name`, `email`, `password`, `address`, `phone`, `food_type_sid`, `bus_start`, `bus_end`, `rest_right`, `src`, `wait_time`, `average_evaluation`, `shop_lat`, `shop_lng` FROM `shop` WHERE 1
 
 router.get('/GetAllAddress',async(req,res)=>{
-  const sql = "SELECT `sid`, `address` FROM `shop` WHERE `sid` =41"
+  const sql = "SELECT `sid`, `address` FROM `shop` WHERE `sid` !=101"
   const [result] = await DB.query(sql)
   res.json(result)  
 })
